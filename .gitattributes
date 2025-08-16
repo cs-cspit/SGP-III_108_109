@@ -1,0 +1,9 @@
+# Auto-detect text files and normalize to LF
+* text=auto
+
+# Explicitly set file types (optional, improves clarity)
+*.js  text
+*.jsx text
+*.json text
+*.md  text
+*.env text
