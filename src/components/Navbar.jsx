@@ -83,12 +83,12 @@ function Navbar() {
             </svg>
           </button> */}
           <div class="hidden w-full md:block md:w-auto" id="navbar-default">
-            <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 justify-end border border-gray-100 rounded-lg  md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+            <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 justify-end border border-gray-100 rounded-lg  md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white  dark:border-gray-700">
               <li>
                 <NavLink  
                   to="/Home"
                   style={({ isActive }) => ({
-                    color: isActive ? "gray" : "black",
+                    color: isActive ? "dark" : "black",
                     fontWeight: isActive ? "bold" : "normal",
                     textDecoration: "none",
                     marginRight: "15px",
@@ -102,7 +102,7 @@ function Navbar() {
                 <NavLink
                   to="/Products"
                   style={({ isActive }) => ({
-                    color: isActive ? "gray" : "black",
+                    color: isActive ? "dark" : "black",
                     fontWeight: isActive ? "bold" : "normal",
                     textDecoration: "none",
                     marginRight: "15px",
