@@ -1,0 +1,18 @@
+[{
+  "_id": {
+    "$oid": "68a02b71ed2dce7da9578c9d"
+  },
+  "name": "DefaultUser",
+  "email": "smitpatidar1994@gmail.com",
+  "password": "$2b$10$WCJIs.deSi8aj3scM2DBCOTVNhOKsGDq/1KQ./Okzz1ubP5WZnN62",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68b66f0eb11cf99b34ee4c1e"
+  },
+  "name": "DefaultUser",
+  "email": "officialsmit02@gmail.com",
+  "password": "$2b$10$vu8hvKqEv4O0IejFj7s7hOI.vViylxOKeGtxrMof/c8HEssZL7OuS",
+  "__v": 0
+}]
