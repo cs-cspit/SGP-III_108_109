@@ -1,6 +1,6 @@
 import React, {  useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router";
-import NavLogo from "../images/LogoHeader.png";
+import NavLogo from "../images/LogoSmit.png";
 import { BarChart, CameraIcon, ChevronFirst, Heart, LogOut, ShoppingCart } from "lucide-react";
 // import ShoppingCart from "./ShoppingCart";
 import { useMyContext } from "./CartContext";
@@ -47,7 +47,7 @@ function Navbar() {
               >
                 <img
                   src={NavLogo}
-                  class="h-9 justify-start rounded-2xl"
+                  class="h-10 justify-start rounded-2xl border-1"
                   alt="Navbar Logo"
                 />
 
@@ -84,7 +84,7 @@ function Navbar() {
             </svg>
           </button> */}
           <div class="hidden w-full md:block md:w-auto" id="navbar-default">
-            <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 justify-end border border-gray-100 rounded-lg  md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white  dark:border-gray-700">
+            <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 items-center justify-end border border-gray-100 rounded-lg  md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white  dark:border-gray-700">
               <li>
                 <NavLink  
                   to="/Home"
@@ -125,7 +125,7 @@ function Navbar() {
                   Booking
                 </NavLink>
               </li>
-              <li>
+              <li class="flex items-center mr-1">
                 <NavLink
                   to="/Favorite"
                   style={({ isActive }) => ({
@@ -135,10 +135,10 @@ function Navbar() {
                     marginRight: "15px",
                   })} 
                 >
-                  <FaHeart size={23} />
+                  <FaHeart size={20} />
                 </NavLink>
               </li>
-              <li>
+              <li class="flex items-center">
                 <NavLink
                   to="/Cart"
                   style={({ isActive }) => ({

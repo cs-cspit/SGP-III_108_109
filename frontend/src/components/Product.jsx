@@ -7,6 +7,8 @@ import { useMyContext } from "./CartContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaHeart } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
+
 
 function Product() {
   const [products, setProducts] = useState([]);
@@ -38,19 +40,19 @@ function Product() {
     // var cat1 = [...products,showCat];
     // console.log(cat1)
 
-    if (category == "women's clothing") {
-      cat = showCat1.filter((item) => item.category == category);
-      setProducts(cat);
-    } else if (category == "men's clothing") {
-      cat1 = showCat.filter((item) => item.category == category);
-      setProducts(cat1);
-    } else if (category == "electronics") {
-      cat2 = showCat2.filter((item) => item.category == category);
-      setProducts(cat2);
-    } else if (category == "jewelery") {
-      cat3 = showCat3.filter((item) => item.category == category);
-      setProducts(cat3);
-    }
+    // if (category == "Marriage") {
+    //   cat = showCat1.filter((item) => item.category == category);
+    //   setProducts(cat);
+    // } else if (category == "Birthday") {
+    //   cat1 = showCat.filter((item) => item.category == category);
+    //   setProducts(cat1);
+    // } else if (category == "Party") {
+    //   cat2 = showCat2.filter((item) => item.category == category);
+    //   setProducts(cat2);
+    // } else if (category == "") {
+    //   cat3 = showCat3.filter((item) => item.category == category);
+    //   setProducts(cat3);
+    // }
   };
   const handleCat = (e) => {
     setCategory(e.target.value);
@@ -109,31 +111,28 @@ function Product() {
         var cat3 = [...showCat3];
         // var cat1 = [...products,showCat];
         // console.log(cat1)
-        console.log(pro.category);
+        // console.log(pro.category);
 
-        if (pro.category == "women's clothing") {
-          cat = showCat1.filter((item) => item.category == pro.category);
+        // if (pro.category == "Marriage") {
+        //   cat = showCat1.filter((item) => item.category == pro.category);
 
-          setRec(rec.concat(cat));
-          console.log(rec);
+        //   setRec(rec.concat(cat));
+        //   console.log(rec);
 
-          console.log(cat);
-        } else if (pro.category == "men's clothing") {
-          cat1 = showCat.filter((item) => item.category == pro.category);
-          setRec(rec.concat(cat1));
-        } else if (pro.category == "electronics") {
-          cat2 = showCat2.filter((item) => item.category == pro.category);
-          setRec(rec.concat(cat2));
-        } else if (pro.category == "jewelery") {
-          cat3 = showCat3.filter((item) => item.category == pro.category);
-          setRec(rec.concat(cat3));
-        }
+        //   console.log(cat);
+        // } else if (pro.category == "Birthday") {
+        //   cat1 = showCat.filter((item) => item.category == pro.category);
+        //   setRec(rec.concat(cat1));
+        // } else if (pro.category == "Party") {
+        //   cat2 = showCat2.filter((item) => item.category == pro.category);
+        //   setRec(rec.concat(cat2));
+        // } 
       }
     }
   };
   const fetchProducts = () => {
     axios
-      .get("https://fakestoreapi.com/products")
+      .get("http://localhost:5000/api/cameras")
       .then((res) => {
         console.log(res.data);
         setProducts(res.data);
@@ -194,10 +193,9 @@ function Product() {
                   <option selected value="all">
                     Choose a Category
                   </option>
-                  <option value="women's clothing">Women's Clothing</option>
-                  <option value="men's clothing">Men's Clothing</option>
-                  <option value="electronics">Electronics</option>
-                  <option value="jewelery">Jewelery</option>
+                  <option value="Marriage">Marriage</option>
+                  <option value="Birthday">Birthday</option>
+                  <option value="Party">Party</option>
                 </select>
               </div>
             </div>
@@ -210,9 +208,9 @@ function Product() {
                     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                       <button
                         className="place-self-end object-fill"
-                        onClick={() => handleFav(pro.id, pro)}
+                        onClick={() => handleFav(pro._id, pro)}
                       >
-                        {fav?.find((item) => item.id === pro.id) ? (
+                        {fav?.find((item) => item.id === pro._id) ? (
                           <FaHeart className="text-red-500" size={25} />
                         ) : (
                           <BiHeart className="" size={25} />
@@ -223,8 +221,8 @@ function Product() {
                         <a href="#">
                           {" "}
                           <img
-                            className="mx-auto h-full "
-                            src={pro.image}
+                            className="mx-auto h-full w-full object-cover object-center rounded"
+                            src={pro.image_url}
                             alt=""
                           />
                         </a>
@@ -240,7 +238,7 @@ function Product() {
                           href="#"
                           className="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white"
                         >
-                          {pro.title}
+                          {pro.name}
                         </a>
 
                         <ul className="mt-2 flex items-center gap-4">
@@ -288,17 +286,17 @@ function Product() {
 
                         <div className="mt-4 flex items-end justify-between gap-4">
                           <p className="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">
-                            ${pro.price}
+                            RS. {pro.price}
                           </p>
                           <p className=" font-semibold leading-tight text-gray-900 dark:text-white">
-                            {pro.category}
+                            {pro.rating}<FaStar className="inline text-yellow-500 mb-1" />
                           </p>
                         </div>
                       </div>
                       <br></br>
                       <div className="flex justify-center">
                         <button
-                          onClick={() => addToCart(pro, pro.id)}
+                          onClick={() => addToCart(pro, pro._id)}
                           className="text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
                         >
                           Add to Cart

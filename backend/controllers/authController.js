@@ -33,6 +33,10 @@ exports.registerUser = async (req, res) => {
   }
 };
 
+exports.logoutUser = (req, res) => {
+  res.json({ msg: "Logout successful" });
+};
+
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 

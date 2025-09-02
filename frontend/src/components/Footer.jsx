@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../images/LogoHeader.png"
+import logo from "../images/LogoSmit.png"
 function Footer() {
   return (
     <>
@@ -11,7 +11,7 @@ function Footer() {
               <a href="/Home" class=" flex items-center">
                 <img
                   src={logo}
-                  class="h-8 me-3 rounded-2xl"
+                  class="h-15 me-5 rounded"
                   alt=""
                 />
                 <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
