@@ -8,6 +8,7 @@ import SignIn from './components/SignIn'
 import Protected from './components/Protected'
 import Home from './components/Home'
 import Product from './components/Product'
+import ShoppingCart from './components/ShoppingCart'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -20,6 +21,7 @@ function App() {
           {/* <Route path="/Home" element={<Protected Pro={Home}/>} /> */}
           <Route path='/Home' element={<Home />} />
           <Route path='/Products' element={<Product />} />
+          <Route path='/Cart' element={<ShoppingCart />}   />
           {/* <Route path='/Products' element={<Protected Pro={Product}/>} /> */}
         </Routes>
       </BrowserRouter>

@@ -1,6 +1,5 @@
 import React from "react";
 import { useState } from "react";
-import SideBar from "./SideBar";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { useMyContext } from "./CartContext";

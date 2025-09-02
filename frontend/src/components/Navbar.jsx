@@ -2,8 +2,8 @@ import React, {  useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router";
 import NavLogo from "../images/LogoHeader.png";
 import { BarChart, ChevronFirst, Heart, LogOut, ShoppingCart } from "lucide-react";
-
-
+// import ShoppingCart from "./ShoppingCart";
+import { useMyContext } from "./CartContext";
 function Navbar() {
   const nav = useNavigate();
   const handleLogout = () => {
@@ -12,7 +12,7 @@ function Navbar() {
   };
   const login = localStorage.getItem("loggedIn");
   const [click,setClick] = useState(false)
-//   const {cart} = useMyContext();
+  const {cart} = useMyContext();
   const  handleProfile = () => {
      if(login){
       console.log(login);
@@ -23,14 +23,14 @@ function Navbar() {
     
   };
 
-//   const countArr = []
-//   cart.map((item,i=0) => {
-//     console.log(item);
+  const countArr = []
+  cart.map((item,i=0) => {
+    console.log(item);
     
-//      countArr[i] = item.count;
-//      i += 1;
-//   })
-//   console.log(countArr);
+     countArr[i] = item.count;
+     i += 1;
+  })
+  console.log(countArr);
   
   return (
     <>
@@ -123,7 +123,7 @@ function Navbar() {
                 >
                   <FaHeart size={23} />
                 </NavLink>
-              </li>
+              </li> */}
               <li>
                 <NavLink
                   to="/Cart"
@@ -138,7 +138,7 @@ function Navbar() {
                   
                 </NavLink>
               </li>
-              <li>
+              {/* <li>
                 <button
                   onClick={handleLogout}
                   class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"

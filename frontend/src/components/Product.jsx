@@ -11,11 +11,12 @@ import { FaHeart } from "react-icons/fa";
 function Product() {
   const [products, setProducts] = useState([]);
 
-//   const { cart,setCart } = useMyContext();
-//   const { fav, setFav } = useMyContext();
-//   const { rec, setRec } = useMyContext();
+  
+  const { cart,setCart } = useMyContext();
+  const { fav, setFav } = useMyContext();
+  const { rec, setRec } = useMyContext();
 
-//   const { quantity, setQuantity} = useMyContext();
+  const { quantity, setQuantity} = useMyContext();
   const [search, setSearch] = useState({
     tit: "",
   });

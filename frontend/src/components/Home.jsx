@@ -28,7 +28,7 @@ function Home() {
           <span class="inline-flex items-center rounded-2xl bg-lime-100 px-4 py-1.5 text-xs sm:text-sm font-serif font-medium text-black">Capture Your Happiness With One Click!</span>
         </div>
         <h1 class="text-4xl sm:text-5xl font-semibold text-gray-900 xl:text-6xl font-serif !leading-tight">
-          Explore the Colorful Memories of Yours in us
+          Explore the Colorful Memories of Yours with us
         </h1>
         {/* <p class="mt-4 text-lg sm:text-xl leading-8 text-gray-800 sm:px-16" style="white-space: pre-line;">Empower your classroom with cutting-edge AI technology. Whether it's lesson planning or creating interactive learning materials, our AI service has got you covered.</p> */}
         <div class="mt-8 flex w-full space-x-8 justify-center"><a
