@@ -208,7 +208,7 @@ function Product() {
                 {products.map((pro) => {
                   return (
                     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                      {/* <button
+                      <button
                         className="place-self-end object-fill"
                         onClick={() => handleFav(pro.id, pro)}
                       >
@@ -217,7 +217,7 @@ function Product() {
                         ) : (
                           <BiHeart className="" size={25} />
                         )}
-                      </button> */}
+                      </button>
 
                       <div className="h-56 w-full">
                         <a href="#">

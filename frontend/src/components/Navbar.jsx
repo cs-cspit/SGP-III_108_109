@@ -1,9 +1,10 @@
 import React, {  useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router";
 import NavLogo from "../images/LogoHeader.png";
-import { BarChart, ChevronFirst, Heart, LogOut, ShoppingCart } from "lucide-react";
+import { BarChart, CameraIcon, ChevronFirst, Heart, LogOut, ShoppingCart } from "lucide-react";
 // import ShoppingCart from "./ShoppingCart";
 import { useMyContext } from "./CartContext";
+import { FaHeart } from "react-icons/fa";
 function Navbar() {
   const nav = useNavigate();
   const handleLogout = () => {
@@ -111,7 +112,20 @@ function Navbar() {
                   Products
                 </NavLink>
               </li>
-              {/* <li>
+              <li>
+                <NavLink
+                  to="/BookDay"
+                  style={({ isActive }) => ({
+                    color: isActive ? "dark" : "black",
+                    fontWeight: isActive ? "bold" : "normal",
+                    textDecoration: "none",
+                    marginRight: "15px",
+                  })}
+                >
+                  Booking
+                </NavLink>
+              </li>
+              <li>
                 <NavLink
                   to="/Favorite"
                   style={({ isActive }) => ({
@@ -123,18 +137,18 @@ function Navbar() {
                 >
                   <FaHeart size={23} />
                 </NavLink>
-              </li> */}
+              </li>
               <li>
                 <NavLink
                   to="/Cart"
                   style={({ isActive }) => ({
-                    color: isActive ? "gray" : "black",
+                    color: isActive ? "dark" : "black",
                     fontWeight: isActive ? "bold" : "normal",
                     textDecoration: "none",
                     marginRight: "15px",
                   })}
                 >
-                   {<h1 className="ml-5 flex justify-end "><ShoppingCart /> {cart.length != 0 ? (countArr.reduce((total,val) =>{return total + val})): (0)}</h1>}
+                   {<h1 className="ml-5 flex justify-end "><CameraIcon /> {cart.length != 0 ? (countArr.reduce((total,val) =>{return total + val})): (0)}</h1>}
                   
                 </NavLink>
               </li>

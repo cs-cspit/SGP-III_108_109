@@ -88,43 +88,13 @@ function ShoppingCart() {
   };
   return (
     <>
-      <div className="flex h-vh bg-[url('./images/Background.jpg')]  bg-no-repeat bg-fixed">
-        <div
-          className={`flex flex-col bg-linear-to-r/srgb from-white to-gray-500 duration-400
-          ${sidebarCollapsed ? "w-25" : "w-60"}`}
-        >
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className=" h-12 w-6 ms-auto  border-0 border-gray-500  focus:outline-none sticky"
-          >
-            <svg
-              className={`w-6 h-6 text-zinc-300 transition-transform duration-300 ${
-                sidebarCollapsed ? "rotate-180" : "rotate-0"
-              }`}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
-          <div className="sticky top-0">
-            <nav className="sticky">
-              <SideBar collapsed={sidebarCollapsed} />
-            </nav>
-          </div>
-        </div>
+      <div className="flex h-vh bg-[url('./images/Background.jpg')]  bg-cover bg-no-repeat bg-fixed">
+        
         <div className="flex-1">
           <div className="sticky top-0">
             <Navbar />
           </div>
-          <section className=" py-8  dark:bg-gray-900 md:py-12">
+          <section className="py-8 ">
             <br></br>
             <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
               <ToastContainer />
@@ -136,7 +106,7 @@ function ShoppingCart() {
                         <a href="#">
                           {" "}
                           <img
-                            className="mx-auto h-full dark:hidden"
+                            className="mx-auto h-full"
                             src={pro.image}
                             alt=""
                           />
@@ -222,7 +192,7 @@ function ShoppingCart() {
               <div>
                 <div className="flex justify-center">
                   <NavLink
-                    to="/ProPic"
+                    to="/Products"
                     style={({ isActive }) => ({
                       color: isActive ? "gray" : "black",
                       fontWeight: isActive ? "bold" : "normal",
@@ -236,7 +206,7 @@ function ShoppingCart() {
               </div>
             )}
           </section>
-          <section className=" py-8  dark:bg-gray-900 md:py-12">
+          <section className="py-8">
             <br></br>
             <div className="mx-auto mt-35 max-w-md overflow-hidden rounded-xl bg-white shadow-md md:max-w-2xl text-center">
               Recommended For You
@@ -251,7 +221,7 @@ function ShoppingCart() {
                         <a href="#">
                           {" "}
                           <img
-                            className="mx-auto h-full dark:hidden"
+                            className="mx-auto h-full"
                             src={pro.image}
                             alt=""
                           />
@@ -307,8 +277,8 @@ function ShoppingCart() {
               </div>
             </div>
           </section>
-          <div className="flex flex-col min-h-screen">
-            <main className="flex-1">{/* <h1>Welcome</h1> */}</main>
+         <div className="flex flex-col ">
+            {/* <main className="flex-1"><h1>Welcome</h1></main> */}
             <Footer />
           </div>
         </div>
