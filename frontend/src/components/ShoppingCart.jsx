@@ -192,7 +192,7 @@ function ShoppingCart() {
               <div>
                 <div className="flex justify-center">
                   <NavLink
-                    to="/Products"
+                    to="/Rent"
                     style={({ isActive }) => ({
                       color: isActive ? "gray" : "black",
                       fontWeight: isActive ? "bold" : "normal",
@@ -200,7 +200,7 @@ function ShoppingCart() {
                       marginRight: "15px",
                     })}
                   >
-                    Products
+                    Rent
                   </NavLink>
                 </div>
               </div>

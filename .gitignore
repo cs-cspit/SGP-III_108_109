@@ -1,0 +1,9 @@
+backend/node_modules
+frontend/node_modules
+FrontEnd_PVF.zip
+FrontEnd_PVF1
+pdf
+api
+FrontEnd_PVF/backend/node_modules/
+FrontEnd_PVF/frontend/node_modules/
+.gitignor

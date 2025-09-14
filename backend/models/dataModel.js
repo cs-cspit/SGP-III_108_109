@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+// Legacy Camera Schema for backward compatibility
 const cameraSchema = new mongoose.Schema({
     name: {
         type: String,

@@ -12,6 +12,7 @@ import { FaStar } from "react-icons/fa";
 
 function Product() {
   const [products, setProducts] = useState([]);
+  const [originalProducts, setOriginalProducts] = useState([]);
 
   
   const { cart,setCart } = useMyContext();
@@ -23,40 +24,7 @@ function Product() {
     tit: "",
   });
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [category, setCategory] = useState("");
-  const [showCat, setShowCategory] = useState([]);
-  const [showCat1, setShowCat1] = useState([]);
-  const [showCat2, setShowCat2] = useState([]);
-  const [showCat3, setShowCat3] = useState([]);
 
-  const handleCategory = (e) => {
-    e.preventDefault();
-    var flag = 0;
-
-    var cat = [...showCat1];
-    var cat1 = [...showCat];
-    var cat2 = [...showCat2];
-    var cat3 = [...showCat3];
-    // var cat1 = [...products,showCat];
-    // console.log(cat1)
-
-    // if (category == "Marriage") {
-    //   cat = showCat1.filter((item) => item.category == category);
-    //   setProducts(cat);
-    // } else if (category == "Birthday") {
-    //   cat1 = showCat.filter((item) => item.category == category);
-    //   setProducts(cat1);
-    // } else if (category == "Party") {
-    //   cat2 = showCat2.filter((item) => item.category == category);
-    //   setProducts(cat2);
-    // } else if (category == "") {
-    //   cat3 = showCat3.filter((item) => item.category == category);
-    //   setProducts(cat3);
-    // }
-  };
-  const handleCat = (e) => {
-    setCategory(e.target.value);
-  };
   const handleFav = (id, pro) => {
     console.log(fav);
     const alreadyThere = fav?.find((item) => item.id === id);
@@ -103,31 +71,6 @@ function Product() {
         draggable: true,
         progress: undefined,
       });
-      const inRec = cart?.find((item) => item.category === pro.category);
-      if (!cart.includes(inRec)) {
-        var cat = [...showCat1];
-        var cat1 = [...showCat];
-        var cat2 = [...showCat2];
-        var cat3 = [...showCat3];
-        // var cat1 = [...products,showCat];
-        // console.log(cat1)
-        // console.log(pro.category);
-
-        // if (pro.category == "Marriage") {
-        //   cat = showCat1.filter((item) => item.category == pro.category);
-
-        //   setRec(rec.concat(cat));
-        //   console.log(rec);
-
-        //   console.log(cat);
-        // } else if (pro.category == "Birthday") {
-        //   cat1 = showCat.filter((item) => item.category == pro.category);
-        //   setRec(rec.concat(cat1));
-        // } else if (pro.category == "Party") {
-        //   cat2 = showCat2.filter((item) => item.category == pro.category);
-        //   setRec(rec.concat(cat2));
-        // } 
-      }
     }
   };
   const fetchProducts = () => {
@@ -136,10 +79,7 @@ function Product() {
       .then((res) => {
         console.log(res.data);
         setProducts(res.data);
-        setShowCategory(res.data);
-        setShowCat1(res.data);
-        setShowCat2(res.data);
-        setShowCat3(res.data);
+        setOriginalProducts(res.data);
         // setRec(res.data);
       })
       .catch((err) => {
@@ -149,13 +89,45 @@ function Product() {
   const handleSearch = (e) => {
     const { name, value } = e.target;
     setSearch({ ...search, [name]: value });
+    
+    // Real-time search as user types
+    if (value.trim() === '') {
+      setProducts(originalProducts);
+    } else {
+      const searchTerm = value.toLowerCase().trim();
+      const filteredData = originalProducts.filter((item) => {
+        const itemName = item.name.toLowerCase();
+        // Split search term by spaces to match multiple words
+        const searchWords = searchTerm.split(' ').filter(word => word.length > 0);
+        
+        // Check if all search words are found anywhere in the item name
+        return searchWords.every(word => itemName.includes(word));
+      });
+      setProducts(filteredData);
+    }
   };
+  
   const handleSearchClick = () => {
-    const newData = products.filter((item) =>
-      item.title.toLowerCase().includes(search.tit.toLowerCase())
-    );
-    // console.log(res.data);
-    setProducts(newData);
+    // Manual search button click (same logic as real-time)
+    const searchTerm = search.tit.toLowerCase().trim();
+    
+    if (!searchTerm) {
+      setProducts(originalProducts);
+      return;
+    }
+    
+    const searchWords = searchTerm.split(' ').filter(word => word.length > 0);
+    const filteredData = originalProducts.filter((item) => {
+      const itemName = item.name.toLowerCase();
+      return searchWords.every(word => itemName.includes(word));
+    });
+    
+    setProducts(filteredData);
+  };
+  
+  const resetSearch = () => {
+    setSearch({ tit: "" });
+    setProducts(originalProducts);
   };
   useEffect(() => {
     fetchProducts();
@@ -169,35 +141,31 @@ function Product() {
           </div>
 
           <section className="py-8">
-            <div className="flex justify-center">
+            <div className="flex justify-center gap-2">
               <input
                 type="text"
-                placeholder="Search"
+                placeholder="Search equipment... (e.g., 'Canon camera', 'lens 50mm', 'tripod')"
                 value={search.tit}
                 name="tit"
                 onChange={(e) => handleSearch(e)}
-                className="bg-gray-50 border border-gray-300  text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-75 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              ></input>
-              <button className="btn btn-dark" onClick={handleSearchClick}>
-                <div>
-                  <BiSearch size={35} />
-                </div>
+                onKeyPress={(e) => e.key === 'Enter' && handleSearchClick()}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              />
+              <button 
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors" 
+                onClick={handleSearchClick}
+              >
+                <BiSearch size={20} />
+                Search
               </button>
-              <div>
-                <select
-                  id="countries"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  onClick={(e) => handleCategory(e)}
-                  onChange={(e) => handleCat(e)}
+              {search.tit && (
+                <button 
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors" 
+                  onClick={resetSearch}
                 >
-                  <option selected value="all">
-                    Choose a Category
-                  </option>
-                  <option value="Marriage">Marriage</option>
-                  <option value="Birthday">Birthday</option>
-                  <option value="Party">Party</option>
-                </select>
-              </div>
+                  Clear
+                </button>
+              )}
             </div>
             <br></br>
             <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">

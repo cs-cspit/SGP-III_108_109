@@ -101,7 +101,7 @@ function Navbar() {
               </li>
               <li>
                 <NavLink
-                  to="/Products"
+                  to="/Rent"
                   style={({ isActive }) => ({
                     color: isActive ? "dark" : "black",
                     fontWeight: isActive ? "bold" : "normal",
@@ -109,7 +109,7 @@ function Navbar() {
                     marginRight: "15px",
                   })}
                 >
-                  Products
+                  Rent
                 </NavLink>
               </li>
               <li>
