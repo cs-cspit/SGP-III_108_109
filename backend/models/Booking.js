@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 const bookingSchema = new mongoose.Schema({
     bookingId: {
         type: String,
-        unique: true,
-        required: true
+        unique: true
     },
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -26,7 +25,8 @@ const bookingSchema = new mongoose.Schema({
     equipmentList: [{
         equipmentId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Equipment'
+            ref: 'Camera',
+            required: true
         },
         quantity: {
             type: Number,

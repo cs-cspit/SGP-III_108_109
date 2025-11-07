@@ -4,8 +4,7 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { Heart, Search, Star, ShoppingCart, Filter, X } from "lucide-react";
 import { useMyContext } from "./CartContext";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 
 
 function Rent() {
@@ -203,11 +202,6 @@ function Rent() {
         {/* Products Grid */}
         <section className="pb-16 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <ToastContainer 
-              position="top-right" 
-              className="z-50"
-              toastClassName="backdrop-blur-lg"
-            />
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {rentItems.map((item) => {
                 return (

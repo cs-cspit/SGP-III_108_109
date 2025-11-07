@@ -3,8 +3,7 @@ import axios from 'axios';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import { Calendar, Camera, Crown, Star } from 'lucide-react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 const EventBooking = () => {
   const [subscriptionPlans, setSubscriptionPlans] = useState([]);
@@ -66,24 +65,30 @@ const EventBooking = () => {
       const token = localStorage.getItem('token');
       
       const bookingPayload = {
-        bookingType: bookingData.serviceType === 'subscription' ? 'Package Booking' : 'Custom Event Booking',
+        bookingType: bookingData.serviceType === 'subscription' ? 'Function Shoot' : 'Event Coverage',
         eventType: bookingData.eventType,
         startDate: bookingData.startDate,
         endDate: bookingData.endDate,
         startTime: bookingData.startTime,
         endTime: bookingData.endTime,
+        equipmentList: [], // Empty for event bookings
         eventDetails: {
-          venue: eventDetails.venue,
-          contactPerson: eventDetails.contactPerson,
-          contactPhone: eventDetails.contactPhone,
-          specialRequirements: eventDetails.specialRequirements
+          venue: eventDetails.venue || '',
+          address: eventDetails.venue || '',
+          contactPerson: eventDetails.contactPerson || '',
+          contactPhone: eventDetails.contactPhone || '',
+          specialRequirements: eventDetails.specialRequirements || ''
         },
+        totalDays: Math.ceil((new Date(bookingData.endDate) - new Date(bookingData.startDate)) / (1000 * 60 * 60 * 24)) + 1,
         serviceType: bookingData.serviceType
       };
 
       if (bookingData.serviceType === 'subscription' && bookingData.selectedPlan) {
         bookingPayload.subscriptionPlanId = bookingData.selectedPlan._id;
       }
+
+      console.log('=== Frontend: Submitting Event Booking ===');
+      console.log('Booking Payload:', JSON.stringify(bookingPayload, null, 2));
 
       const response = await axios.post('http://localhost:5000/api/bookings/create', bookingPayload, {
         headers: { 'x-auth-token': token }
@@ -108,8 +113,27 @@ const EventBooking = () => {
         specialRequirements: ''
       });
     } catch (error) {
-      console.error('Error creating booking:', error);
-      toast.error('Error creating event booking. Please try again.');
+      console.error('=== Frontend: Event Booking Error ===');
+      console.error('Error:', error);
+      console.error('Error response:', error.response?.data);
+      
+      let errorMessage = 'Error creating event booking. Please try again.';
+      
+      if (error.response?.data) {
+        const data = error.response.data;
+        if (data.errors && Array.isArray(data.errors)) {
+          // Validation errors array
+          errorMessage = 'Validation Error: ' + data.errors.join(', ');
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.error) {
+          errorMessage = data.error;
+        } else if (data.details) {
+          errorMessage = data.details;
+        }
+      }
+      
+      toast.error(errorMessage);
     }
   };
 
@@ -161,8 +185,6 @@ const EventBooking = () => {
             </div>
 
             <div className="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200 p-8">
-              <ToastContainer position="top-right" className="z-50" />
-
               {/* Service Type Selection */}
               <div className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">

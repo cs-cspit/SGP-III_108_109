@@ -1,6 +1,3 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
@@ -32,7 +29,6 @@ import MyBookings from './components/MyBookings'
 import AllRequestsManagement from './components/admin/AllRequestsManagement'
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
@@ -69,16 +65,15 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-      <ToastContainer 
+      <ToastContainer
         position="top-right"
-        autoClose={3000}
+        autoClose={3200}
         hideProgressBar={false}
-        newestOnTop={false}
         closeOnClick
-        rtl={false}
         pauseOnFocusLoss
         draggable
         pauseOnHover
+        theme="light"
       />
     </>
   )

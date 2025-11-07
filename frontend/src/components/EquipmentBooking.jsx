@@ -3,8 +3,7 @@ import axios from 'axios';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import { Calendar, Clock, Camera, Plus, Minus, Trash2, ShoppingCart } from 'lucide-react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 const EquipmentBooking = () => {
   const [step, setStep] = useState(1);
@@ -172,25 +171,31 @@ const EquipmentBooking = () => {
       
       const bookingPayload = {
         bookingType: 'Equipment Rental',
-        eventType: 'Equipment Rental',
+        eventType: 'Other',
         startDate: bookingData.startDate,
         endDate: bookingData.endDate,
         startTime: bookingData.includeHours ? bookingData.startTime : null,
         endTime: bookingData.includeHours ? bookingData.endTime : null,
         equipmentList: selectedEquipment.map(item => ({
           equipmentId: item._id,
-          quantity: item.quantity
+          quantity: item.quantity,
+          dailyRate: item.dailyRate || item.price || 0,
+          totalDays: bookingData.totalDays
         })),
         eventDetails: {
-          contactPerson: customerDetails.contactPerson,
-          contactPhone: customerDetails.contactPhone,
-          address: customerDetails.deliveryAddress,
-          specialRequirements: customerDetails.specialRequirements
+          venue: customerDetails.deliveryAddress || '',
+          address: customerDetails.deliveryAddress || '',
+          contactPerson: customerDetails.contactPerson || '',
+          contactPhone: customerDetails.contactPhone || '',
+          specialRequirements: customerDetails.specialRequirements || ''
         },
         totalDays: bookingData.totalDays,
         totalHours: bookingData.includeHours ? bookingData.totalHours : 0,
         includeHours: bookingData.includeHours
       };
+
+      console.log('=== Frontend: Submitting Booking ===');
+      console.log('Booking Payload:', JSON.stringify(bookingPayload, null, 2));
 
       const response = await axios.post('http://localhost:5000/api/bookings/create', bookingPayload, {
         headers: { 'x-auth-token': token }
@@ -216,8 +221,25 @@ const EquipmentBooking = () => {
         specialRequirements: ''
       });
     } catch (error) {
-      console.error('Error creating booking:', error);
-      toast.error('Error creating equipment booking. Please try again.');
+      console.error('=== Frontend: Booking Error ===');
+      console.error('Error:', error);
+      console.error('Error response:', error.response?.data);
+      
+      let errorMessage = 'Error creating equipment booking. Please try again.';
+      
+      if (error.response?.data) {
+        const data = error.response.data;
+        if (data.errors && Array.isArray(data.errors)) {
+          // Validation errors array
+          errorMessage = 'Validation Error: ' + data.errors.join(', ');
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.error) {
+          errorMessage = data.error;
+        }
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -297,8 +319,6 @@ const EquipmentBooking = () => {
             </div>
 
             <div className="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200 p-8">
-              <ToastContainer position="top-right" className="z-50" />
-
               {step === 1 && (
                 <div className="space-y-6">
                   <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../images/LogoHeader.png';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 
 function SignIn() {
@@ -51,7 +50,6 @@ function SignIn() {
     <div>
       <div className="bg-[url('./images/SonyBackground.jpg')] bg-fixed bg-cover flex flex-col justify-center sm:h-screen p-4">
         <div className="max-w-md w-full mx-auto border justify-center border-gray-400 rounded-2xl shadow-2xs p-8 bg-white">
-          <ToastContainer />
           <div className="text-center mb-12"></div>
           <img
             className="w-50 ml-25 h-3 sm:h-18 rounded-2xl shadow-xl mx-1.5 border-b-blue-300"

@@ -7,6 +7,9 @@ const SubscriptionPlan = require('../models/SubscriptionPlan');
 // Create a new booking
 exports.createBooking = async (req, res) => {
     try {
+        console.log('=== Create Booking Request ===');
+        console.log('Request body:', JSON.stringify(req.body, null, 2));
+        
         const customerId = req.user._id;
         const { 
             bookingType, 
@@ -30,6 +33,11 @@ exports.createBooking = async (req, res) => {
             const start = new Date(startDate);
             const end = new Date(endDate);
             calculatedTotalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+        }
+
+        // Validate equipment list for Equipment Rental bookings
+        if (bookingType === 'Equipment Rental' && (!equipmentList || equipmentList.length === 0)) {
+            return res.status(400).json({ message: 'Equipment list is required for Equipment Rental bookings' });
         }
 
         // Calculate equipment pricing
@@ -134,7 +142,7 @@ exports.createBooking = async (req, res) => {
             bookingEventDetails.specialRequirements = req.body.eventDetails.specialRequirements;
         }
 
-        const booking = new Booking({
+        const bookingData = {
             customerId,
             bookingType,
             eventType: eventType || 'Other',
@@ -155,9 +163,17 @@ exports.createBooking = async (req, res) => {
                 remainingAmount: totalAmount
             },
             customerNotes: specialRequirements || (req.body.eventDetails && req.body.eventDetails.specialRequirements) || ''
-        });
+        };
 
+        console.log('=== Booking Data to Save ===');
+        console.log(JSON.stringify(bookingData, null, 2));
+
+        const booking = new Booking(bookingData);
+
+        console.log('=== Saving Booking ===');
         await booking.save();
+        console.log('=== Booking Saved Successfully ===');
+        console.log('Booking ID:', booking.bookingId);
 
         // Create notification for admin
         await Notification.create({
@@ -176,7 +192,18 @@ exports.createBooking = async (req, res) => {
             bookingId: booking.bookingId 
         });
     } catch (error) {
-        console.error('Create booking error:', error);
+        console.error('=== Create Booking Error ===');
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        if (error.name === 'ValidationError') {
+            console.error('Validation errors:', error.errors);
+            const validationErrors = Object.values(error.errors).map(e => e.message);
+            return res.status(400).json({ 
+                message: 'Validation error', 
+                errors: validationErrors,
+                details: error.message 
+            });
+        }
         res.status(400).json({ message: 'Error creating booking', error: error.message });
     }
 };
