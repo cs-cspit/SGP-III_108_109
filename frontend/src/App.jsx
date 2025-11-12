@@ -16,9 +16,7 @@ import EquipmentManagement from './components/admin/EquipmentManagement'
 import BookingManagement from './components/admin/BookingManagement'
 import SubscriptionPlansManagement from './components/admin/SubscriptionPlansManagement'
 import CustomerManagement from './components/admin/CustomerManagement'
-import PaymentManagement from './components/admin/PaymentManagement'
 import PaymentRequestsManagement from './components/admin/PaymentRequestsManagement'
-import Settings from './components/admin/Settings'
 import UserDashboard from './components/UserDashboard'
 import PortfolioGallery from './components/PortfolioGallery'
 import UserSubscriptions from './components/UserSubscriptions'
@@ -62,10 +60,8 @@ function App() {
             <Route path='bookings' element={<BookingManagement />} />
             <Route path='customers' element={<CustomerManagement />} />
             <Route path='subscriptions' element={<SubscriptionPlansManagement />} />
-            <Route path='payments' element={<PaymentManagement />} />
             <Route path='payment-requests' element={<PaymentRequestsManagement />} />
             <Route path='all-requests' element={<AllRequestsManagement />} />
-            <Route path='settings' element={<Settings />} />
             {/* Add more admin routes here as we create components */}
           </Route>
         </Routes>

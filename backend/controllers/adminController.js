@@ -1,4 +1,5 @@
 const Equipment = require('../models/Equipment');
+const mongoose = require('mongoose');
 const Camera = require('../models/dataModel'); // Your existing camera model
 const Booking = require('../models/Booking');
 const Payment = require('../models/Payment');
@@ -1043,7 +1044,7 @@ exports.getAllCustomers = async (req, res) => {
                     $group: {
                         _id: null,
                         totalBookings: { $sum: 1 },
-                        totalSpent: { $sum: '$totalAmount' },
+                        totalSpent: { $sum: '$pricing.totalAmount' },
                         lastBooking: { $max: '$createdAt' }
                     }
                 }
@@ -1094,28 +1095,37 @@ exports.getCustomerDetails = async (req, res) => {
         }
         
         // Get customer's bookings
-        const bookings = await Booking.find({ customerId: id })
+        const bookingDocs = await Booking.find({ customerId: id })
             .populate('equipmentList.equipmentId', 'name type')
             .sort({ createdAt: -1 })
             .limit(10);
-            
+        
+        const bookings = bookingDocs.map((booking) => {
+            const bookingObj = booking.toObject();
+            bookingObj.totalAmount = bookingObj.totalAmount ?? bookingObj.pricing?.totalAmount ?? 0;
+            return bookingObj;
+        });
+        
         // Get customer's payments
         const payments = await Payment.find({ customerId: id })
             .sort({ paymentDate: -1 })
             .limit(10);
-            
+        
         // Get customer's subscriptions
         const subscriptions = await CustomerSubscription.find({ customerId: id })
             .populate('subscriptionPlanId', 'displayName planType price duration')
             .sort({ createdAt: -1 });
-            
+        
+        const paymentTotal = payments.reduce((sum, payment) => sum + (payment.amount || 0), 0);
+        const bookingTotalAmount = bookings.reduce((sum, booking) => sum + (booking.totalAmount || 0), 0);
+        
         // Calculate stats
         const stats = {
             totalBookings: bookings.length,
-            totalSpent: payments.reduce((sum, payment) => sum + (payment.amount || 0), 0),
+            totalSpent: paymentTotal,
             activeSubscriptions: subscriptions.filter(sub => sub.status === 'Active').length,
             lastBookingDate: bookings[0]?.createdAt || null,
-            averageOrderValue: bookings.length > 0 ? payments.reduce((sum, payment) => sum + (payment.amount || 0), 0) / bookings.length : 0
+            averageOrderValue: bookings.length > 0 ? bookingTotalAmount / bookings.length : 0
         };
         
         res.json({
@@ -1185,15 +1195,17 @@ exports.toggleCustomerBlacklist = async (req, res) => {
         await customer.save();
         
         // Create notification for customer
-        const notification = new Notification({
-            userId: customer._id,
+        await Notification.create({
             title: customer.isBlacklisted ? 'Account Suspended' : 'Account Reactivated',
-            message: customer.isBlacklisted 
+            message: customer.isBlacklisted
                 ? `Your account has been suspended. Reason: ${reason}`
                 : 'Your account has been reactivated. You can now access all services.',
-            type: customer.isBlacklisted ? 'warning' : 'success'
+            type: customer.isBlacklisted ? 'alert' : 'system',
+            recipientType: 'customer',
+            recipientId: customer._id,
+            relatedEntityType: 'customer',
+            relatedEntityId: customer._id
         });
-        await notification.save();
         
         res.json({
             message: `Customer ${customer.isBlacklisted ? 'blacklisted' : 'removed from blacklist'} successfully`,
@@ -1221,13 +1233,15 @@ exports.verifyCustomer = async (req, res) => {
         }
         
         // Create notification for customer
-        const notification = new Notification({
-            userId: customer._id,
+        await Notification.create({
             title: 'Account Verified',
             message: 'Your account has been successfully verified. You now have access to all premium features.',
-            type: 'success'
+            type: 'system',
+            recipientType: 'customer',
+            recipientId: customer._id,
+            relatedEntityType: 'customer',
+            relatedEntityId: customer._id
         });
-        await notification.save();
         
         res.json({
             message: 'Customer verified successfully',
@@ -1490,8 +1504,13 @@ exports.processPaymentRequest = async (req, res) => {
             });
         }
         
-        // Find booking
-        const booking = await Booking.findById(bookingId);
+        let booking = null;
+        if (mongoose.Types.ObjectId.isValid(bookingId)) {
+            booking = await Booking.findById(bookingId);
+        }
+        if (!booking) {
+            booking = await Booking.findOne({ bookingId });
+        }
         if (!booking) {
             return res.status(404).json({ 
                 success: false, 
@@ -1499,8 +1518,10 @@ exports.processPaymentRequest = async (req, res) => {
             });
         }
         
-        // Find payment request
-        const paymentRequest = booking.paymentRequests.id(requestId);
+        let paymentRequest = booking.paymentRequests.id(requestId);
+        if (!paymentRequest) {
+            paymentRequest = booking.paymentRequests.find((request) => request._id?.toString() === requestId);
+        }
         if (!paymentRequest) {
             return res.status(404).json({ 
                 success: false, 

@@ -12,7 +12,6 @@ import {
   Menu,
   X,
   Star,
-  Settings,
   Bell,
   Search
 } from "lucide-react";

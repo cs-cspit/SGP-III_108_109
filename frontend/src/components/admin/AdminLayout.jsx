@@ -17,11 +17,9 @@ const AdminLayout = () => {
     { name: 'Bookings', href: '/admin/bookings', icon: FaCalendarAlt },
     { name: 'Customers', href: '/admin/customers', icon: FaUsers },
     { name: 'Packages', href: '/admin/subscriptions', icon: FaGem },
-    { name: 'Payments', href: '/admin/payments', icon: FaCreditCard },
     { name: 'Payment Requests', href: '/admin/payment-requests', icon: FaMoneyBillWave },
     { name: 'All Requests', href: '/admin/all-requests', icon: FaClipboardList },
     { name: 'Reports', href: '/admin/reports', icon: FaChartLine },
-    { name: 'Settings', href: '/admin/settings', icon: FaCog },
   ];
 
   const handleLogout = async () => {

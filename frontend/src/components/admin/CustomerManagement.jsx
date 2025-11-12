@@ -445,7 +445,7 @@ const CustomerManagement = () => {
                                                     <td className="px-4 py-2 text-sm">{booking.bookingId}</td>
                                                     <td className="px-4 py-2 text-sm">{formatDate(booking.createdAt)}</td>
                                                     <td className="px-4 py-2 text-sm">{booking.eventType}</td>
-                                                    <td className="px-4 py-2 text-sm">₹{booking.totalAmount.toLocaleString()}</td>
+                                                    <td className="px-4 py-2 text-sm">₹{Number(booking.totalAmount || 0).toLocaleString()}</td>
                                                     <td className="px-4 py-2 text-sm">
                                                         <span className={`px-2 py-1 text-xs rounded-full ${
                                                             booking.status === 'Confirmed' ? 'bg-green-100 text-green-800' :

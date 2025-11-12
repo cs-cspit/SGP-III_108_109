@@ -9,7 +9,6 @@ import {
   Calendar, 
   CreditCard, 
   Star, 
-  Settings, 
   LogOut, 
   Eye, 
   Edit3, 
