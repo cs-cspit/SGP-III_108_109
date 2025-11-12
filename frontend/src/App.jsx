@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import SignUp from './components/SignUp'
 import SignIn from './components/SignIn'
 import Protected from './components/Protected'
+import AdminProtected from './components/AdminProtected'
 import Home from './components/Home'
 import Rent from './components/Rent'
 import ShoppingCart from './components/ShoppingCart'
@@ -50,8 +51,12 @@ function App() {
           <Route path='/MyRequests' element={<Protected Pro={MyRequests}/>}  />
           <Route path='/MyBookings' element={<Protected Pro={MyBookings}/>}  />
           
-          {/* Admin Routes */}
-          <Route path='/admin' element={<Protected Pro={AdminLayout}/>} >
+          {/* Admin Routes - Protected with AdminProtected */}
+          <Route path='/admin' element={
+            <AdminProtected>
+              <AdminLayout />
+            </AdminProtected>
+          }>
             <Route index element={<AdminDashboard />} />
             <Route path='equipment' element={<EquipmentManagement />} />
             <Route path='bookings' element={<BookingManagement />} />

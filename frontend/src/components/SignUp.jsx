@@ -1,172 +1,251 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { BrowserRouter, Routes } from "react-router-dom";
-import SignIn from "./SignIn";
-import { useFormik } from "formik";
-import { FormValidation } from "./FormValidation";
-// import Home from "../pages/Home";
-import logo from "../images/LogoHeader.png";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import logo from "../images/LogoSmit.png";
+import bgImage from "../images/Sony3.jpeg";
+import { toast } from "react-toastify";
 import axios from "axios";
 
-
-// const UserKey = "UserInfos";
 function SignUp() {
   const [signUpForm, setSignUpForm] = useState({
+    name: "",
     email: "",
+    phone: "",
     password: "",
-    cpassword: "",
+    cpassword: ""
   });
 
-  // const [home, showHome] = useState(false);
   const nav = useNavigate();
-  // localStorage.setItem("UserCredentials",)
+
+  // Check if user is already logged in on component mount
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    
+    if (token) {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      
+      if (user.role === 'admin') {
+        nav('/admin');
+      } else {
+        nav('/Home');
+      }
+    }
+  }, [nav]);
+
   const handleClick = async (e) => {
     e.preventDefault();
 
-    const { email, password, cpassword } = signUpForm;
+    const { name, email, phone, password, cpassword } = signUpForm;
+
+    // Validation
+    if (!name.trim()) {
+      toast.error("Name is required");
+      return;
+    }
+
+    if (!email.trim()) {
+      toast.error("Email is required");
+      return;
+    }
+
+    if (!password) {
+      toast.error("Password is required");
+      return;
+    }
 
     if (password !== cpassword) {
-      alert("Passwords do not match");
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters");
       return;
     }
 
     try {
       const res = await axios.post("http://localhost:5000/api/auth/register", {
+        name,
         email,
         password,
-        name: "DefaultUser" // or add name input in form
+        phone,
+        address: {
+          street: "",
+          city: "",
+          state: "",
+          pincode: "",
+          country: "India"
+        }
       });
 
-      // Save token to localStorage
+      // Save token and user info to localStorage
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("loggedIn", email); // Optional
+      localStorage.setItem("loggedIn", true);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      alert("Registered successfully!");
+      toast.success("Registration successful!");
       nav("/Home");
     } catch (err) {
-    console.error("ERROR:", err);
-
-    if (err.response) {
-      // Server responded with a status outside 2xx
-      console.error("Server Response:", err.response.data);
-      alert(err.response.data.msg || "Registration failed");
-    } else if (err.request) {
-      // Request was made but no response
-      console.error("No response received:", err.request);
-      alert("No response from server. Is backend running?");
-    } else {
-      // Something else happened
-      console.error("Error", err.message);
-      alert("Error: " + err.message);
+      console.error("Registration Error:", err);
+      
+      if (err.response) {
+        toast.error(err.response.data.msg || err.response.data.error || "Registration failed");
+      } else if (err.request) {
+        toast.error("No response from server. Please check if backend is running.");
+      } else {
+        toast.error("Error: " + err.message);
+      }
     }
-  }
-
   };
 
   const handleCh = (e) => {
     const { name, value } = e.target;
     setSignUpForm({ ...signUpForm, [name]: value });
   };
-  const { handleBlur, handleSubmit, errors } = useFormik({
-    initialValues: signUpForm,
-    validationSchema: FormValidation,
-    onSubmit: (values) => {
-      console.log(values);
-    },
-  });
-  return (
-    <>
-      <div>
-        <div class="bg-[url('./images/SonyBackground.jpg')] bg-fixed bg-cover flex flex-col justify-center sm:h-screen p-4 bg-linear-to-r/srgb from-white to-gray-500">
-          <div class="max-w-md w-full mx-auto border border-gray-400  rounded-2xl p-8  bg-white">
-            <div className="flex justify-center mx-auto">
-              <br></br>
-              <img
-                class="w-50 h-7 sm:h-11 rounded-2xl shadow-2xl mx-1.5 border-b-blue-300"
-                src={logo}
-                alt=""
-              ></img>
-            </div>
-            {/* <h1 class="text-black">Sign Up</h1> */}
-            
 
-            <form onSubmit={handleSubmit}>
-              <div class="space-y-6">
+  return (
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background image */}
+      <div className="fixed inset-0 z-0">
+        <img
+          src={bgImage}
+          alt="Background"
+          className="w-full h-full object-cover"
+        />
+        {/* Overlay for better text contrast */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black/30 via-black/20 to-black/30" />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col justify-center min-h-screen p-4 py-12">
+        <div className="max-w-xl w-full mx-auto">
+          {/* Card */}
+          <div className="bg-white/15 backdrop-blur-2xl border border-white/30 rounded-3xl shadow-2xl p-8 md:p-10">
+            {/* Logo with rounded rectangle background */}
+            <div className="text-center mb-8">
+              <div className="inline-block bg-white/25 backdrop-blur-lg p-5 rounded-2xl border-2 border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
+                <img
+                  className="h-16 sm:h-20 hover:scale-105 transition-transform duration-300"
+                  src={logo}
+                  alt="Logo"
+                />
+              </div>
+              <h2 className="mt-6 text-3xl font-bold text-white drop-shadow-lg">Create Account</h2>
+              <p className="mt-2 text-sm text-gray-100 drop-shadow-md">Join us and start capturing memories</p>
+            </div>
+            
+            <form onSubmit={handleClick}>
+              <div className="space-y-5">
+                {/* Name */}
                 <div>
-                    <label class="  text-slate-800 text-sm font-medium mb-2 block">
-                      Email Id
-                    </label>
+                  <label className="text-white text-sm font-semibold mb-2 block drop-shadow-md">
+                    Full Name <span className="text-red-300">*</span>
+                  </label>
                   <input
-                    id="email"
-                    name="email"
-                    value={signUpForm.email}
+                    name="name"
+                    value={signUpForm.name}
                     type="text"
                     onChange={handleCh}
-                    onBlur={handleBlur}
-                    class="text-slate-800 bg-white border border-slate-300 w-full text-sm px-4 py-3 rounded-md outline-gray-500"
-                    placeholder="Enter email"
+                    className="bg-white/20 text-white placeholder-gray-200 border-2 border-white/40 w-full text-sm px-4 py-3.5 rounded-xl outline-none focus:border-white/70 focus:bg-white/30 focus:ring-2 focus:ring-white/30 transition-all hover:bg-white/25 hover:border-white/50 backdrop-blur-md"
+                    placeholder="Enter your full name"
                     required
                   />
-                  <br></br>
-                  {errors.email && <small>{errors.email}</small>}
                 </div>
-                <div>
-                  <label class="text-slate-800 text-sm font-medium mb-2 block">
-                    Password
-                  </label>
-                  <input
-                    id="password"
-                    name="password"
-                    value={signUpForm.password}
-                    type="password"
-                    onChange={handleCh}
-                    onBlur={handleBlur}
-                    class="text-slate-800 bg-white border border-slate-300 w-full text-sm px-4 py-3 rounded-md outline-gray-500"
-                    placeholder="Enter password"
-                    required
-                  />
-                  <br></br>
-                  {errors.password && <small>{errors.password}</small>}
+
+                {/* Email and Phone in a row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-white text-sm font-semibold mb-2 block drop-shadow-md">
+                      Email <span className="text-red-300">*</span>
+                    </label>
+                    <input
+                      name="email"
+                      value={signUpForm.email}
+                      type="email"
+                      onChange={handleCh}
+                      className="bg-white/20 text-white placeholder-gray-200 border-2 border-white/40 w-full text-sm px-4 py-3.5 rounded-xl outline-none focus:border-white/70 focus:bg-white/30 focus:ring-2 focus:ring-white/30 transition-all hover:bg-white/25 hover:border-white/50 backdrop-blur-md"
+                      placeholder="your@email.com"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-white text-sm font-semibold mb-2 block drop-shadow-md">
+                      Phone Number
+                    </label>
+                    <input
+                      name="phone"
+                      value={signUpForm.phone}
+                      type="tel"
+                      onChange={handleCh}
+                      className="bg-white/20 text-white placeholder-gray-200 border-2 border-white/40 w-full text-sm px-4 py-3.5 rounded-xl outline-none focus:border-white/70 focus:bg-white/30 focus:ring-2 focus:ring-white/30 transition-all hover:bg-white/25 hover:border-white/50 backdrop-blur-md"
+                      placeholder="10-digit number"
+                      pattern="[0-9]{10}"
+                      maxLength="10"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label class="text-slate-800 text-sm font-medium mb-2 block">
-                    Confirm Password
-                  </label>
-                  <input
-                    name="cpassword"
-                    value={signUpForm.cpassword}
-                    type="password"
-                    onChange={handleCh}
-                    onBlur={handleBlur}
-                    class="text-slate-800 bg-white border border-slate-300 w-full text-sm px-4 py-3 rounded-md outline-gray-500"
-                    placeholder="Enter confirm password"
-                    required
-                  />
-                  {errors.cpassword && <small>{errors.cpassword}</small>}
+
+                {/* Password Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                  <div>
+                    <label className="text-white text-sm font-semibold mb-2 block drop-shadow-md">
+                      Password <span className="text-red-300">*</span>
+                    </label>
+                    <input
+                      name="password"
+                      value={signUpForm.password}
+                      type="password"
+                      onChange={handleCh}
+                      className="bg-white/20 text-white placeholder-gray-200 border-2 border-white/40 w-full text-sm px-4 py-3.5 rounded-xl outline-none focus:border-white/70 focus:bg-white/30 focus:ring-2 focus:ring-white/30 transition-all hover:bg-white/25 hover:border-white/50 backdrop-blur-md"
+                      placeholder="Min. 6 characters"
+                      required
+                      minLength="6"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-white text-sm font-semibold mb-2 block drop-shadow-md">
+                      Confirm Password <span className="text-red-300">*</span>
+                    </label>
+                    <input
+                      name="cpassword"
+                      value={signUpForm.cpassword}
+                      type="password"
+                      onChange={handleCh}
+                      className="bg-white/20 text-white placeholder-gray-200 border-2 border-white/40 w-full text-sm px-4 py-3.5 rounded-xl outline-none focus:border-white/70 focus:bg-white/30 focus:ring-2 focus:ring-white/30 transition-all hover:bg-white/25 hover:border-white/50 backdrop-blur-md"
+                      placeholder="Confirm password"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div class="mt-12">
+              <div className="mt-8">
                 <button
                   type="submit"
-                  class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded w-96"
-                  onClick={(e) => handleClick(e)}
+                  className="w-full bg-white/20 hover:bg-white/30 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] border-2 border-white/50 hover:border-white/70 backdrop-blur-lg drop-shadow-lg"
                 >
-                  Sign Up
+                  Create Account
                 </button>
               </div>
             </form>
-            <p class="text-slate-800 text-sm mt-6 text-center">
+
+            <p className="text-gray-100 text-sm mt-6 text-center drop-shadow-md">
               Already have an account?{" "}
-              <a href="/Login" class="text-gray-600">
-                Login here
-              </a>{" "}
+              <a href="/Login" className="text-white hover:text-gray-100 font-semibold underline decoration-2 underline-offset-2 transition-colors drop-shadow-lg">
+                Sign In
+              </a>
             </p>
           </div>
+
+          {/* Footer text */}
+          <p className="text-center text-gray-100 text-xs mt-6 drop-shadow-md">
+            By signing up, you agree to our Terms of Service and Privacy Policy
+          </p>
         </div>
       </div>
-    </>
+    </div>
   );
 }
-// Break In 13:28PM to 14:10PM
+
 export default SignUp;

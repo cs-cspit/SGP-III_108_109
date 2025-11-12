@@ -45,12 +45,18 @@ function Navbar() {
   
   const handleLogout = async () => {
     try {
-      // Clear all authentication related data
+      // Check if user wants to keep credentials for next login
+      const rememberedUser = localStorage.getItem("rememberedUser");
+      
+      // Clear authentication data
       localStorage.removeItem("token");
       localStorage.removeItem("loggedIn");
       localStorage.removeItem("user");
       localStorage.removeItem("PVFstudio_cart");
       localStorage.removeItem("PVFstudio_favorites");
+      
+      // Keep rememberedUser if it exists (for "Remember Me" functionality)
+      // If user didn't check "Remember Me", this will be null anyway
       
       // Show success message
       toast.success('Logged out successfully!');

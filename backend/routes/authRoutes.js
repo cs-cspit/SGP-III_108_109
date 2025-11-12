@@ -18,7 +18,15 @@ router.get("/user", auth, getUser);
 // @route PUT /api/auth/update-profile
 router.put("/update-profile", auth, updateProfile);
 
+// @route GET /api/auth/protected
 router.get("/protected", auth, (req, res) => {
-  res.json({ msg: "This is a protected route" });
+  res.json({ 
+    msg: "This is a protected route",
+    user: {
+      id: req.user._id,
+      role: req.user.role,
+      email: req.user.email
+    }
+  });
 });
 module.exports = router;
