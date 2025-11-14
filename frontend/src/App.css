@@ -1,0 +1,72 @@
+/* Global toast styling aligned with gray/white theme */
+.Toastify__toast {
+	background-color: #f9fafb;
+	color: #1f2937;
+	border: 1px solid #d2d6dc;
+	border-radius: 12px;
+	box-shadow: 0 20px 40px -24px rgba(15, 23, 42, 0.45);
+	padding: 0.75rem 1rem;
+}
+
+.Toastify__toast-icon svg {
+	color: #4b5563;
+	fill: currentColor;
+}
+
+.Toastify__toast--success {
+	border-left: 4px solid #6b7280;
+}
+
+.Toastify__toast--error {
+	border-left: 4px solid #ef4444;
+}
+
+.Toastify__toast--info {
+	border-left: 4px solid #94a3b8;
+}
+
+.Toastify__toast--warning {
+	border-left: 4px solid #f97316;
+}
+
+.Toastify__toast-body {
+	font-size: 0.95rem;
+	font-weight: 500;
+}
+
+.Toastify__progress-bar {
+	background: #9ca3af;
+}
+
+.Toastify__close-button {
+	color: #6b7280;
+	opacity: 0.75;
+}
+
+.Toastify__close-button:hover {
+	color: #374151;
+	opacity: 1;
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 0.25;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s infinite ease-in-out;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}

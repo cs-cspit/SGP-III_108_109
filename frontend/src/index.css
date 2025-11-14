@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+/* Portfolio Full Screen Styles */
+.fullscreen-modal {
+    padding: 0 !important;
+}
+
+.fullscreen-browser {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 9999 !important;
+    padding: 0 !important;
+}
+
+.fullscreen-browser .bg-white {
+    background: rgba(0, 0, 0, 0.95) !important;
+    color: white !important;
+}
+
+.fullscreen-browser .text-gray-900 {
+    color: white !important;
+}
+
+.fullscreen-browser .text-gray-600 {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.fullscreen-browser .text-gray-700 {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.fullscreen-browser .border-gray-200 {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.fullscreen-browser .bg-gray-100 {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.fullscreen-browser .bg-blue-100 {
+    background: rgba(59, 130, 246, 0.2) !important;
+}
+
+.fullscreen-browser .text-blue-800 {
+    color: rgba(147, 197, 253, 0.9) !important;
+}
+
+.fullscreen-browser .bg-gray-50 {
+    background: rgba(0, 0, 0, 0.5) !important;
+}
+
+.fullscreen-browser button {
+    filter: brightness(1.2);
+}
+
+.fullscreen-browser button:hover {
+    filter: brightness(1.4);
+}
+
+/* Hide scrollbars in full screen */
+.fullscreen-browser ::-webkit-scrollbar {
+    display: none;
+}
+
+.fullscreen-browser {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
