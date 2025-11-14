@@ -2,7 +2,16 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 module.exports = async function (req, res, next) {
-  const token = req.header("x-auth-token");
+  // Check for token in multiple formats
+  let token = req.header("x-auth-token");
+  
+  // If not found, check Authorization header with Bearer format
+  if (!token) {
+    const authHeader = req.header("Authorization");
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.substring(7); // Remove "Bearer " prefix
+    }
+  }
 
   if (!token) {
     return res.status(401).json({ msg: "No token, authorization denied" });
@@ -20,6 +29,7 @@ module.exports = async function (req, res, next) {
     req.user = user;
     next();
   } catch (err) {
+    console.error("Auth middleware error:", err.message);
     res.status(401).json({ msg: "Token is not valid" });
   }
 };

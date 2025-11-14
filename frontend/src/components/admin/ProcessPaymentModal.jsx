@@ -13,7 +13,7 @@ const ProcessPaymentModal = ({ isOpen, onClose, onRequestProcessed, request }) =
     setLoading(true);
     
     try {
-      await onRequestProcessed(request._id, request.paymentRequests._id, status, adminNotes);
+      await onRequestProcessed(request.bookingId, request.paymentRequests._id, status, adminNotes);
       onClose();
     } catch (error) {
       console.error('Error processing request:', error);
@@ -115,11 +115,7 @@ const ProcessPaymentModal = ({ isOpen, onClose, onRequestProcessed, request }) =
             type="button"
             onClick={handleSubmit}
             disabled={loading}
-            className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 ${
-              status === 'Accepted' 
-                ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500' 
-                : 'bg-red-600 hover:bg-red-700 focus:ring-red-500'
-            } text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm`}
+            className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-600 hover:bg-gray-700 focus:ring-gray-500 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
           >
             {loading ? 'Processing...' : status === 'Accepted' ? 'Accept Request' : 'Reject Request'}
           </button>

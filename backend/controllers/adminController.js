@@ -1545,9 +1545,14 @@ exports.processPaymentRequest = async (req, res) => {
         // If accepted, create actual payment record and update booking
         if (status === 'Accepted') {
             const Payment = require('../models/Payment');
-            
+
+            // Generate payment ID
+            const count = await Payment.countDocuments();
+            const paymentId = `PAY${Date.now()}${(count + 1).toString().padStart(3, '0')}`;
+
             // Create payment record
             const payment = new Payment({
+                paymentId: paymentId,
                 bookingId: booking._id,
                 customerId: booking.customerId,
                 amount: paymentRequest.amount,
@@ -1638,10 +1643,466 @@ exports.getBookingPaymentRequests = async (req, res) => {
         });
     } catch (error) {
         console.error('Get booking payment requests error:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Error fetching payment requests', 
-            error: error.message 
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching payment requests',
+            error: error.message
+        });
+    }
+};
+
+// Reports and Analytics Functions
+exports.getRevenueReport = async (req, res) => {
+    try {
+        const { period = 'monthly', startDate, endDate } = req.query;
+
+        let dateFilter = {};
+        if (startDate && endDate) {
+            dateFilter = {
+                paymentDate: {
+                    $gte: new Date(startDate),
+                    $lte: new Date(endDate)
+                }
+            };
+        } else {
+            // Default to current year
+            const currentYear = new Date().getFullYear();
+            dateFilter = {
+                paymentDate: {
+                    $gte: new Date(currentYear, 0, 1),
+                    $lte: new Date(currentYear, 11, 31)
+                }
+            };
+        }
+
+        // Revenue by period
+        let groupBy;
+        if (period === 'daily') {
+            groupBy = {
+                $dateToString: { format: "%Y-%m-%d", date: "$paymentDate" }
+            };
+        } else if (period === 'monthly') {
+            groupBy = {
+                $dateToString: { format: "%Y-%m", date: "$paymentDate" }
+            };
+        } else if (period === 'yearly') {
+            groupBy = {
+                $dateToString: { format: "%Y", date: "$paymentDate" }
+            };
+        }
+
+        const revenueData = await Payment.aggregate([
+            { $match: { status: 'Completed', ...dateFilter } },
+            {
+                $group: {
+                    _id: groupBy,
+                    totalRevenue: { $sum: '$amount' },
+                    transactionCount: { $sum: 1 },
+                    averageTransaction: { $avg: '$amount' }
+                }
+            },
+            { $sort: { '_id': 1 } }
+        ]);
+
+        // Revenue by payment method
+        const revenueByMethod = await Payment.aggregate([
+            { $match: { status: 'Completed', ...dateFilter } },
+            {
+                $group: {
+                    _id: '$paymentMethod',
+                    totalRevenue: { $sum: '$amount' },
+                    transactionCount: { $sum: 1 }
+                }
+            },
+            { $sort: { totalRevenue: -1 } }
+        ]);
+
+        // Revenue by subscription plan
+        const revenueByPlan = await CustomerSubscription.aggregate([
+            { $match: { status: 'Active', createdAt: dateFilter.paymentDate } },
+            {
+                $lookup: {
+                    from: 'subscriptionplans',
+                    localField: 'subscriptionPlanId',
+                    foreignField: '_id',
+                    as: 'plan'
+                }
+            },
+            { $unwind: '$plan' },
+            {
+                $group: {
+                    _id: '$plan.displayName',
+                    totalRevenue: { $sum: '$amountPaid' },
+                    subscriptionCount: { $sum: 1 }
+                }
+            },
+            { $sort: { totalRevenue: -1 } }
+        ]);
+
+        // Total summary
+        const totalRevenue = await Payment.aggregate([
+            { $match: { status: 'Completed', ...dateFilter } },
+            { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } }
+        ]);
+
+        res.json({
+            success: true,
+            data: {
+                summary: {
+                    totalRevenue: totalRevenue[0]?.total || 0,
+                    totalTransactions: totalRevenue[0]?.count || 0,
+                    averageTransaction: totalRevenue[0] ? totalRevenue[0].total / totalRevenue[0].count : 0
+                },
+                revenueTrends: revenueData,
+                revenueByMethod,
+                revenueByPlan
+            }
+        });
+    } catch (error) {
+        console.error('Revenue report error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error generating revenue report',
+            error: error.message
+        });
+    }
+};
+
+exports.getBookingReport = async (req, res) => {
+    try {
+        const { period = 'monthly', startDate, endDate } = req.query;
+
+        let dateFilter = {};
+        if (startDate && endDate) {
+            dateFilter = {
+                createdAt: {
+                    $gte: new Date(startDate),
+                    $lte: new Date(endDate)
+                }
+            };
+        } else {
+            // Default to current year
+            const currentYear = new Date().getFullYear();
+            dateFilter = {
+                createdAt: {
+                    $gte: new Date(currentYear, 0, 1),
+                    $lte: new Date(currentYear, 11, 31)
+                }
+            };
+        }
+
+        // Booking trends by period
+        let groupBy;
+        if (period === 'daily') {
+            groupBy = {
+                $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+            };
+        } else if (period === 'monthly') {
+            groupBy = {
+                $dateToString: { format: "%Y-%m", date: "$createdAt" }
+            };
+        } else if (period === 'yearly') {
+            groupBy = {
+                $dateToString: { format: "%Y", date: "$createdAt" }
+            };
+        }
+
+        const bookingTrends = await Booking.aggregate([
+            { $match: dateFilter },
+            {
+                $group: {
+                    _id: groupBy,
+                    totalBookings: { $sum: 1 },
+                    confirmedBookings: {
+                        $sum: { $cond: [{ $eq: ['$status', 'Confirmed'] }, 1, 0] }
+                    },
+                    completedBookings: {
+                        $sum: { $cond: [{ $eq: ['$status', 'Completed'] }, 1, 0] }
+                    },
+                    cancelledBookings: {
+                        $sum: { $cond: [{ $eq: ['$status', 'Cancelled'] }, 1, 0] }
+                    }
+                }
+            },
+            { $sort: { '_id': 1 } }
+        ]);
+
+        // Bookings by status
+        const bookingsByStatus = await Booking.aggregate([
+            { $match: dateFilter },
+            {
+                $group: {
+                    _id: '$status',
+                    count: { $sum: 1 },
+                    totalRevenue: { $sum: '$totalAmount' }
+                }
+            },
+            { $sort: { count: -1 } }
+        ]);
+
+        // Bookings by event type
+        const bookingsByEventType = await Booking.aggregate([
+            { $match: dateFilter },
+            {
+                $group: {
+                    _id: '$eventType',
+                    count: { $sum: 1 },
+                    totalRevenue: { $sum: '$totalAmount' },
+                    averageRevenue: { $avg: '$totalAmount' }
+                }
+            },
+            { $sort: { count: -1 } }
+        ]);
+
+        // Customer booking frequency
+        const customerBookingFrequency = await Booking.aggregate([
+            { $match: dateFilter },
+            {
+                $group: {
+                    _id: '$customerId',
+                    bookingCount: { $sum: 1 },
+                    totalSpent: { $sum: '$totalAmount' }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'customer'
+                }
+            },
+            { $unwind: '$customer' },
+            {
+                $project: {
+                    customerName: '$customer.name',
+                    customerEmail: '$customer.email',
+                    bookingCount: 1,
+                    totalSpent: 1,
+                    averageSpent: { $divide: ['$totalSpent', '$bookingCount'] }
+                }
+            },
+            { $sort: { bookingCount: -1 } },
+            { $limit: 20 }
+        ]);
+
+        // Total summary
+        const totalBookings = await Booking.countDocuments(dateFilter);
+        const totalRevenue = await Booking.aggregate([
+            { $match: dateFilter },
+            { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+        ]);
+
+        res.json({
+            success: true,
+            data: {
+                summary: {
+                    totalBookings,
+                    totalRevenue: totalRevenue[0]?.total || 0,
+                    averageBookingValue: totalBookings > 0 ? (totalRevenue[0]?.total || 0) / totalBookings : 0
+                },
+                bookingTrends,
+                bookingsByStatus,
+                bookingsByEventType,
+                topCustomers: customerBookingFrequency
+            }
+        });
+    } catch (error) {
+        console.error('Booking report error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error generating booking report',
+            error: error.message
+        });
+    }
+};
+
+exports.getCustomerReport = async (req, res) => {
+    try {
+        const { period = 'monthly' } = req.query;
+
+        // Customer acquisition trends
+        const currentYear = new Date().getFullYear();
+        const customerTrends = await User.aggregate([
+            {
+                $match: {
+                    role: 'customer',
+                    createdAt: {
+                        $gte: new Date(currentYear, 0, 1),
+                        $lte: new Date(currentYear, 11, 31)
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: { format: "%Y-%m", date: "$createdAt" }
+                    },
+                    newCustomers: { $sum: 1 }
+                }
+            },
+            { $sort: { '_id': 1 } }
+        ]);
+
+        // Customer status distribution
+        const customerStatus = await User.aggregate([
+            { $match: { role: 'customer' } },
+            {
+                $lookup: {
+                    from: 'customersubscriptions',
+                    localField: '_id',
+                    foreignField: 'customerId',
+                    as: 'subscriptions'
+                }
+            },
+            {
+                $addFields: {
+                    hasActiveSubscription: {
+                        $gt: [
+                            {
+                                $size: {
+                                    $filter: {
+                                        input: '$subscriptions',
+                                        cond: { $eq: ['$$this.status', 'Active'] }
+                                    }
+                                }
+                            },
+                            0
+                        ]
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: '$hasActiveSubscription',
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+
+        // Customer lifetime value
+        const customerLifetimeValue = await Booking.aggregate([
+            {
+                $group: {
+                    _id: '$customerId',
+                    totalBookings: { $sum: 1 },
+                    totalSpent: { $sum: '$totalAmount' },
+                    lastBooking: { $max: '$createdAt' }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'customer'
+                }
+            },
+            { $unwind: '$customer' },
+            {
+                $project: {
+                    customerName: '$customer.name',
+                    customerEmail: '$customer.email',
+                    totalBookings: 1,
+                    totalSpent: 1,
+                    averageOrderValue: { $divide: ['$totalSpent', '$totalBookings'] },
+                    lastBooking: 1
+                }
+            },
+            { $sort: { totalSpent: -1 } },
+            { $limit: 20 }
+        ]);
+
+        // Total customer stats
+        const totalCustomers = await User.countDocuments({ role: 'customer' });
+        const activeCustomers = await User.aggregate([
+            { $match: { role: 'customer' } },
+            {
+                $lookup: {
+                    from: 'bookings',
+                    localField: '_id',
+                    foreignField: 'customerId',
+                    as: 'bookings'
+                }
+            },
+            {
+                $match: {
+                    'bookings.0': { $exists: true }
+                }
+            },
+            { $count: 'active' }
+        ]);
+
+        res.json({
+            success: true,
+            data: {
+                summary: {
+                    totalCustomers,
+                    activeCustomers: activeCustomers[0]?.active || 0,
+                    inactiveCustomers: totalCustomers - (activeCustomers[0]?.active || 0)
+                },
+                customerTrends,
+                customerStatus,
+                topCustomersByValue: customerLifetimeValue
+            }
+        });
+    } catch (error) {
+        console.error('Customer report error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error generating customer report',
+            error: error.message
+        });
+    }
+};
+
+exports.getEquipmentReport = async (req, res) => {
+    try {
+        // Equipment usage statistics (simplified since we don't have detailed rental tracking)
+        const equipmentStats = await Camera.find().select('name price rating');
+
+        // Most popular equipment types (based on bookings that mention equipment)
+        const equipmentUsage = await Booking.aggregate([
+            { $unwind: '$equipment' },
+            {
+                $group: {
+                    _id: '$equipment.name',
+                    usageCount: { $sum: 1 },
+                    totalRevenue: { $sum: '$totalAmount' }
+                }
+            },
+            { $sort: { usageCount: -1 } },
+            { $limit: 10 }
+        ]);
+
+        // Equipment revenue contribution
+        const equipmentRevenue = await Booking.aggregate([
+            { $unwind: '$equipment' },
+            {
+                $group: {
+                    _id: '$equipment.name',
+                    totalRevenue: { $sum: '$equipment.price' },
+                    bookingCount: { $sum: 1 }
+                }
+            },
+            { $sort: { totalRevenue: -1 } },
+            { $limit: 10 }
+        ]);
+
+        res.json({
+            success: true,
+            data: {
+                equipmentStats,
+                equipmentUsage,
+                equipmentRevenue
+            }
+        });
+    } catch (error) {
+        console.error('Equipment report error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error generating equipment report',
+            error: error.message
         });
     }
 };

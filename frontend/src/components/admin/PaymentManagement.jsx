@@ -238,7 +238,7 @@ const PaymentManagement = () => {
                                                 <>
                                                     <button
                                                         onClick={() => handleUpdatePaymentStatus(payment._id, 'Completed')}
-                                                        className="text-green-600 hover:text-green-900"
+                                                        className="text-gray-600 hover:text-gray-900"
                                                     >
                                                         Approve
                                                     </button>

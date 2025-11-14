@@ -26,6 +26,8 @@ import MyPaymentRequests from './components/MyPaymentRequests'
 import MyRequests from './components/MyRequests'
 import MyBookings from './components/MyBookings'
 import AllRequestsManagement from './components/admin/AllRequestsManagement'
+import PortfolioManagement from './components/admin/PortfolioManagement'
+import ReportsManagement from './components/admin/ReportsManagement'
 
 function App() {
 
@@ -61,7 +63,9 @@ function App() {
             <Route path='customers' element={<CustomerManagement />} />
             <Route path='subscriptions' element={<SubscriptionPlansManagement />} />
             <Route path='payment-requests' element={<PaymentRequestsManagement />} />
+            <Route path='portfolio' element={<PortfolioManagement />} />
             <Route path='all-requests' element={<AllRequestsManagement />} />
+            <Route path='reports' element={<ReportsManagement />} />
             {/* Add more admin routes here as we create components */}
           </Route>
         </Routes>

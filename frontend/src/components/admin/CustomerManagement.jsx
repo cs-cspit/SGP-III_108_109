@@ -323,27 +323,27 @@ const CustomerManagement = () => {
                                         <div className="flex space-x-2">
                                             <button
                                                 onClick={() => fetchCustomerDetails(customer._id)}
-                                                className="text-indigo-600 hover:text-indigo-900"
+                                                className="text-gray-600 hover:text-gray-800"
                                             >
                                                 View
                                             </button>
                                             <button
                                                 onClick={() => handleEditCustomer(customer)}
-                                                className="text-blue-600 hover:text-blue-900"
+                                                className="text-gray-600 hover:text-gray-800"
                                             >
                                                 Edit
                                             </button>
                                             {!customer.isVerified && (
                                                 <button
                                                     onClick={() => handleVerifyCustomer(customer._id)}
-                                                    className="text-green-600 hover:text-green-900"
+                                                    className="text-gray-600 hover:text-gray-800"
                                                 >
                                                     Verify
                                                 </button>
                                             )}
                                             <button
                                                 onClick={() => handleToggleBlacklist(customer._id, customer.isBlacklisted)}
-                                                className={customer.isBlacklisted ? 'text-green-600 hover:text-green-900' : 'text-red-600 hover:text-red-900'}
+                                                className="text-gray-600 hover:text-gray-800"
                                             >
                                                 {customer.isBlacklisted ? 'Unblock' : 'Block'}
                                             </button>
@@ -578,7 +578,7 @@ const CustomerManagement = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                                    className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
                                 >
                                     Update Customer
                                 </button>

@@ -3,6 +3,7 @@ const router = express.Router();
 const portfolioController = require('../controllers/portfolioController');
 const auth = require('../middleware/authMiddleware');
 const adminAuth = require('../middleware/adminAuth');
+const upload = require('../middleware/upload');
 
 // ============ PUBLIC ROUTES ============
 
@@ -23,8 +24,8 @@ router.get('/:id', portfolioController.getPortfolioById);
 // Portfolio management
 router.get('/admin/all', auth, adminAuth, portfolioController.getAllPortfolios);
 router.get('/admin/statistics', auth, adminAuth, portfolioController.getPortfolioStatistics);
-router.post('/admin', auth, adminAuth, portfolioController.createPortfolio);
-router.put('/admin/:id', auth, adminAuth, portfolioController.updatePortfolio);
+router.post('/admin', auth, adminAuth, upload.array('images', 50), portfolioController.createPortfolio);
+router.put('/admin/:id', auth, adminAuth, upload.array('images', 50), portfolioController.updatePortfolio);
 router.delete('/admin/:id', auth, adminAuth, portfolioController.deletePortfolio);
 router.put('/admin/:id/visibility', auth, adminAuth, portfolioController.togglePortfolioVisibility);
 router.put('/admin/:id/featured', auth, adminAuth, portfolioController.toggleFeaturedStatus);

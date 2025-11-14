@@ -1,6 +1,7 @@
 const express = require("express");
 const connectDB = require("./config/db");
 const cors = require("cors");
+const path = require("path");
 const dataRoutes = require('./routes/dataRoutes');
 
 require("dotenv").config();
@@ -18,6 +19,9 @@ app.use(cors({
 // app.use(express.json({ extended: false }));
 
 app.use(express.json());
+
+// Serve static files for uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api', dataRoutes);
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));

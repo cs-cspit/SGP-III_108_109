@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { 
   FaTachometerAlt, FaBoxes, FaCalendarAlt, FaUsers, FaCreditCard,
   FaChartLine, FaCog, FaSignOutAlt, FaBars, FaTimes,
-  FaGem, FaClipboardList, FaMoneyBillWave
+  FaGem, FaClipboardList, FaMoneyBillWave, FaImages
 } from 'react-icons/fa';
 
 const AdminLayout = () => {
@@ -18,6 +18,7 @@ const AdminLayout = () => {
     { name: 'Customers', href: '/admin/customers', icon: FaUsers },
     { name: 'Packages', href: '/admin/subscriptions', icon: FaGem },
     { name: 'Payment Requests', href: '/admin/payment-requests', icon: FaMoneyBillWave },
+    { name: 'Portfolio', href: '/admin/portfolio', icon: FaImages },
     { name: 'All Requests', href: '/admin/all-requests', icon: FaClipboardList },
     { name: 'Reports', href: '/admin/reports', icon: FaChartLine },
   ];

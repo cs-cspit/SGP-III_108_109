@@ -183,8 +183,6 @@ exports.getPortfoliosByCategory = async (req, res) => {
 exports.getAllPortfolios = async (req, res) => {
     try {
         const { 
-            page = 1, 
-            limit = 10, 
             category = '', 
             isPublic = '', 
             isFeatured = '',
@@ -204,22 +202,11 @@ exports.getAllPortfolios = async (req, res) => {
         }
         
         const portfolios = await Portfolio.find(filter)
-            .sort({ createdAt: -1 })
-            .limit(limit * 1)
-            .skip((page - 1) * limit);
-        
-        const total = await Portfolio.countDocuments(filter);
+            .sort({ createdAt: -1 });
         
         res.json({
             success: true,
-            data: {
-                portfolios,
-                pagination: {
-                    currentPage: parseInt(page),
-                    totalPages: Math.ceil(total / limit),
-                    total
-                }
-            }
+            data: portfolios
         });
     } catch (error) {
         console.error('Error fetching portfolios (admin):', error);
@@ -234,7 +221,35 @@ exports.getAllPortfolios = async (req, res) => {
 // Create new portfolio (admin)
 exports.createPortfolio = async (req, res) => {
     try {
-        const portfolioData = req.body;
+        const { title, description, category, subcategory, location, eventDate, tags, isPublic, isFeatured } = req.body;
+        
+        // Process uploaded images
+        const images = [];
+        if (req.files && req.files.length > 0) {
+            req.files.forEach((file, index) => {
+                images.push({
+                    url: `/uploads/portfolio/${file.filename}`,
+                    caption: req.body[`captions[${index}]`] || '',
+                    isPrimary: index === 0
+                });
+            });
+        }
+        
+        // Parse tags
+        const tagsArray = tags ? tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+        
+        const portfolioData = {
+            title,
+            description,
+            category,
+            subcategory: subcategory || '',
+            location: location || '',
+            eventDate: eventDate || null,
+            tags: tagsArray,
+            images,
+            isPublic: isPublic === 'true' || isPublic === true,
+            isFeatured: isFeatured === 'true' || isFeatured === true
+        };
         
         const portfolio = new Portfolio(portfolioData);
         await portfolio.save();
@@ -258,13 +273,9 @@ exports.createPortfolio = async (req, res) => {
 exports.updatePortfolio = async (req, res) => {
     try {
         const { id } = req.params;
-        const updateData = req.body;
+        const { title, description, category, subcategory, location, eventDate, tags, isPublic, isFeatured } = req.body;
         
-        const portfolio = await Portfolio.findByIdAndUpdate(
-            id,
-            updateData,
-            { new: true, runValidators: true }
-        );
+        const portfolio = await Portfolio.findById(id);
         
         if (!portfolio) {
             return res.status(404).json({
@@ -272,6 +283,33 @@ exports.updatePortfolio = async (req, res) => {
                 message: 'Portfolio not found'
             });
         }
+        
+        // Update basic fields
+        portfolio.title = title || portfolio.title;
+        portfolio.description = description || portfolio.description;
+        portfolio.category = category || portfolio.category;
+        portfolio.subcategory = subcategory || portfolio.subcategory;
+        portfolio.location = location || portfolio.location;
+        portfolio.eventDate = eventDate || portfolio.eventDate;
+        portfolio.isPublic = isPublic === 'true' || isPublic === true;
+        portfolio.isFeatured = isFeatured === 'true' || isFeatured === true;
+        
+        // Update tags
+        if (tags) {
+            portfolio.tags = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+        }
+        
+        // Add new images if uploaded
+        if (req.files && req.files.length > 0) {
+            const newImages = req.files.map((file, index) => ({
+                url: `/uploads/portfolio/${file.filename}`,
+                caption: req.body[`captions[${index}]`] || '',
+                isPrimary: portfolio.images.length === 0 && index === 0
+            }));
+            portfolio.images.push(...newImages);
+        }
+        
+        await portfolio.save();
         
         res.json({
             success: true,

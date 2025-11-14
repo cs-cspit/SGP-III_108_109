@@ -124,6 +124,19 @@ function Navbar() {
               Rent
             </NavLink>
 
+            <NavLink
+              to="/Portfolio"
+              className={({ isActive }) =>
+                `px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                  isActive
+                    ? 'text-white bg-gray-700'
+                    : 'text-gray-700 hover:text-white hover:bg-gray-600'
+                }`
+              }
+            >
+              Portfolio
+            </NavLink>
+
             {/* Booking Dropdown */}
             <div className="relative group">
               <button className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-white hover:bg-gray-600 transition-colors duration-200">
@@ -330,6 +343,20 @@ function Navbar() {
                 onClick={handleMenuItemClick}
               >
                 Rent
+              </NavLink>
+
+              <NavLink
+                to="/Portfolio"
+                className={({ isActive }) =>
+                  `block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+                    isActive
+                      ? 'text-white bg-gray-700'
+                      : 'text-gray-700 hover:text-white hover:bg-gray-600'
+                  }`
+                }
+                onClick={handleMenuItemClick}
+              >
+                Portfolio
               </NavLink>
               
               <div className="px-3 py-2">

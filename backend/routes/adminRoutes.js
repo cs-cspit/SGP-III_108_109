@@ -64,5 +64,7 @@ router.put('/settings/:key', adminController.updateSettingByKey);
 // Reports and Analytics Routes
 router.get('/reports/revenue', adminController.getRevenueReport);
 router.get('/reports/bookings', adminController.getBookingReport);
+router.get('/reports/customers', adminController.getCustomerReport);
+router.get('/reports/equipment', adminController.getEquipmentReport);
 
 module.exports = router;

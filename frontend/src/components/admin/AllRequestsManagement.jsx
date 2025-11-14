@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ProcessPaymentModal from './ProcessPaymentModal';
 
 const AllRequestsManagement = () => {
   const [requests, setRequests] = useState([]);
@@ -438,7 +437,7 @@ const ProcessRequestModal = ({ isOpen, onClose, onRequestProcessed, request }) =
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
       await onRequestProcessed(request, status, adminNotes, rejectionReason);
       onClose();
@@ -452,145 +451,137 @@ const ProcessRequestModal = ({ isOpen, onClose, onRequestProcessed, request }) =
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-          <div 
-            className="absolute inset-0 bg-gray-500 opacity-75"
-            onClick={onClose}
-          ></div>
-        </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-gray-500 bg-opacity-75"
+        onClick={onClose}
+      ></div>
 
-        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+      <div className="relative z-10 w-full max-w-lg bg-white rounded-lg shadow-xl">
+        <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <div className="w-full">
+            <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+              Process {request.type} Request
+            </h3>
 
-        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-          <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <div className="sm:flex sm:items-start">
-              <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                <h3 className="text-lg leading-6 font-medium text-gray-900">
-                  Process {request.type} Request
-                </h3>
-                <div className="mt-4">
-                  <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-gray-600">Customer</p>
-                        <p className="font-medium">
-                          {request.type === 'Payment' ? request.customer.name : request.customerName}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">
-                          {request.type === 'Payment' ? 'Booking ID' : 'Package'}
-                        </p>
-                        <p className="font-medium">
-                          {request.type === 'Payment' ? request.bookingId : request.packageName}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Amount</p>
-                        <p className="font-medium">
-                          ₹{request.amount.toLocaleString('en-IN')}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Method</p>
-                        <p className="font-medium">
-                          {request.type === 'Payment' ? request.paymentMethod : 'Subscription'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Status
-                      </label>
-                      <div className="flex space-x-4">
-                        <label className="inline-flex items-center">
-                          <input
-                            type="radio"
-                            name="status"
-                            value="Accepted"
-                            checked={status === 'Accepted'}
-                            onChange={(e) => setStatus(e.target.value)}
-                            className="h-4 w-4 text-gray-600 focus:ring-gray-500 border-gray-300"
-                          />
-                          <span className="ml-2 text-sm text-gray-600">
-                            {request.type === 'Subscription' ? 'Approve' : 'Accept'}
-                          </span>
-                        </label>
-                        <label className="inline-flex items-center">
-                          <input
-                            type="radio"
-                            name="status"
-                            value="Rejected"
-                            checked={status === 'Rejected'}
-                            onChange={(e) => setStatus(e.target.value)}
-                            className="h-4 w-4 text-gray-600 focus:ring-gray-500 border-gray-300"
-                          />
-                          <span className="ml-2 text-sm text-gray-600">Reject</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    {status === 'Rejected' && request.type === 'Subscription' && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Rejection Reason
-                        </label>
-                        <textarea
-                          rows={3}
-                          value={rejectionReason}
-                          onChange={(e) => setRejectionReason(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
-                          placeholder="Enter rejection reason..."
-                          required
-                        />
-                      </div>
-                    )}
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Admin Notes
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={adminNotes}
-                        onChange={(e) => setAdminNotes(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
-                        placeholder="Enter notes or reason..."
-                      />
-                    </div>
-                  </form>
+            <div className="bg-gray-50 p-4 rounded-lg mb-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-600">Customer</p>
+                  <p className="font-medium">
+                    {request.type === 'Payment' ? request.customer.name : request.customerName}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">
+                    {request.type === 'Payment' ? 'Booking ID' : 'Package'}
+                  </p>
+                  <p className="font-medium">
+                    {request.type === 'Payment' ? request.bookingId : request.packageName}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Amount</p>
+                  <p className="font-medium">
+                    ₹{request.amount.toLocaleString('en-IN')}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Method</p>
+                  <p className="font-medium">
+                    {request.type === 'Payment' ? request.paymentMethod : 'Subscription'}
+                  </p>
                 </div>
               </div>
             </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status
+                </label>
+                <div className="flex space-x-4">
+                  <label className="inline-flex items-center">
+                    <input
+                      type="radio"
+                      name="status"
+                      value="Accepted"
+                      checked={status === 'Accepted'}
+                      onChange={(e) => setStatus(e.target.value)}
+                      className="h-4 w-4 text-gray-600 focus:ring-gray-500 border-gray-300"
+                    />
+                    <span className="ml-2 text-sm text-gray-600">
+                      {request.type === 'Subscription' ? 'Approve' : 'Accept'}
+                    </span>
+                  </label>
+                  <label className="inline-flex items-center">
+                    <input
+                      type="radio"
+                      name="status"
+                      value="Rejected"
+                      checked={status === 'Rejected'}
+                      onChange={(e) => setStatus(e.target.value)}
+                      className="h-4 w-4 text-gray-600 focus:ring-gray-500 border-gray-300"
+                    />
+                    <span className="ml-2 text-sm text-gray-600">Reject</span>
+                  </label>
+                </div>
+              </div>
+
+              {status === 'Rejected' && request.type === 'Subscription' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Rejection Reason
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={rejectionReason}
+                    onChange={(e) => setRejectionReason(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+                    placeholder="Enter rejection reason..."
+                    required
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Admin Notes
+                </label>
+                <textarea
+                  rows={3}
+                  value={adminNotes}
+                  onChange={(e) => setAdminNotes(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+                  placeholder="Enter notes or reason..."
+                />
+              </div>
+            </form>
           </div>
-          <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={loading}
-              className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 ${
-                status === 'Accepted' 
-                  ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500' 
-                  : 'bg-red-600 hover:bg-red-700 focus:ring-red-500'
-              } text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm`}
-            >
-              {loading ? 'Processing...' : status === 'Accepted' ? 
-                (request.type === 'Subscription' ? 'Approve Request' : 'Accept Request') : 
-                'Reject Request'}
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-            >
-              Cancel
-            </button>
-          </div>
+        </div>
+
+        <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={loading}
+            className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
+              status === 'Accepted'
+                ? 'bg-gray-600 hover:bg-gray-700 focus:ring-gray-500'
+                : 'bg-red-600 hover:bg-red-700 focus:ring-red-500'
+            }`}
+          >
+            {loading ? 'Processing...' : status === 'Accepted' ?
+              (request.type === 'Subscription' ? 'Approve Request' : 'Accept Request') :
+              'Reject Request'}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </div>

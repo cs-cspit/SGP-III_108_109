@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { Camera, Star, Users, Award, Play, ArrowRight, Sparkles } from "lucide-react";
 import DataPhoto from "../images/Sony3.jpeg";
 
 function Home() {
+  const navigate = useNavigate();
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   return (
@@ -47,7 +49,9 @@ function Home() {
               
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <button className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center">
+                <button 
+                  onClick={() => navigate('/Portfolio')}
+                  className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center">
                   <Camera className="w-5 h-5 mr-2" />
                   Explore Memories
                   <ArrowRight className="w-5 h-5 ml-2" />
@@ -184,10 +188,14 @@ function Home() {
               Let's work together to create stunning photographs that you'll treasure forever.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white hover:bg-gray-100 text-gray-900 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+              <button 
+                onClick={() => navigate('/EventBooking')}
+                className="bg-white hover:bg-gray-100 text-gray-900 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
                 Book a Session
               </button>
-              <button className="bg-transparent hover:bg-white hover:text-gray-900 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 border-2 border-white">
+              <button 
+                onClick={() => navigate('/Portfolio')}
+                className="bg-transparent hover:bg-white hover:text-gray-900 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 border-2 border-white">
                 View Portfolio
               </button>
             </div>

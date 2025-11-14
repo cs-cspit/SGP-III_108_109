@@ -397,7 +397,7 @@ const BookingManagement = () => {
                             <>
                               <button
                                 onClick={() => handleStatusUpdate(booking._id, 'Confirmed')}
-                                className="text-green-600 hover:text-green-900"
+                                className="text-gray-600 hover:text-gray-900"
                                 title="Approve"
                               >
                                 <FaCheck className="h-4 w-4" />
@@ -604,7 +604,7 @@ const BookingManagement = () => {
                     </button>
                     <button
                       onClick={() => handleStatusUpdate(selectedBooking._id, 'Confirmed')}
-                      className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700"
+                      className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700"
                     >
                       <FaCheck className="inline h-4 w-4 mr-1" />
                       Approve
@@ -633,7 +633,7 @@ const BookingManagement = () => {
                     </button>
                     <button
                       onClick={() => handleCompleteBooking(selectedBooking._id)}
-                      className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700"
+                      className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700"
                     >
                       <FaCheckCircle className="inline h-4 w-4 mr-1" />
                       Complete
@@ -805,7 +805,7 @@ const BookingManagement = () => {
               </button>
               <button
                 onClick={handleUpdateReturn}
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700"
+                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700"
               >
                 Update Return Status
               </button>
