@@ -22,6 +22,7 @@ const AdminDashboard = () => {
       setStats(response.data);
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
+      setStats(null); // Set to null to show error message
     } finally {
       setLoading(false);
     }
@@ -56,7 +57,7 @@ const AdminDashboard = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-500">Total Bookings</p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.overview.totalBookings}</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.overview?.totalBookings || 0}</p>
             </div>
           </div>
         </div>
@@ -69,7 +70,7 @@ const AdminDashboard = () => {
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-500">Total Revenue</p>
               <p className="text-2xl font-semibold text-gray-900">
-                ₹{stats.overview.totalRevenue.toLocaleString()}
+                ₹{(stats.overview?.totalRevenue || 0).toLocaleString()}
               </p>
             </div>
           </div>
@@ -82,7 +83,7 @@ const AdminDashboard = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-500">Total Customers</p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.overview.totalCustomers}</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.overview?.totalCustomers || 0}</p>
             </div>
           </div>
         </div>
@@ -94,7 +95,7 @@ const AdminDashboard = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-500">Total Equipment</p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.overview.totalEquipment}</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.overview?.totalEquipment || 0}</p>
             </div>
           </div>
         </div>
@@ -109,19 +110,19 @@ const AdminDashboard = () => {
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium text-gray-600">Available</span>
               <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
-                {stats.inventory.available}
+                {stats.inventory?.available || 0}
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium text-gray-600">Rented</span>
               <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">
-                {stats.inventory.rented}
+                {stats.inventory?.rented || 0}
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium text-gray-600">Maintenance</span>
               <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold">
-                {stats.inventory.maintenance}
+                {stats.inventory?.maintenance || 0}
               </span>
             </div>
           </div>
@@ -138,7 +139,7 @@ const AdminDashboard = () => {
                 <span className="text-sm font-medium text-gray-800">Pending Bookings</span>
               </div>
               <span className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs font-semibold">
-                {stats.bookings.pending}
+                {stats.bookings?.pending || 0}
               </span>
             </div>
 
@@ -148,7 +149,7 @@ const AdminDashboard = () => {
                 <span className="text-sm font-medium text-gray-800">Low Stock Items</span>
               </div>
               <span className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs font-semibold">
-                {stats.alerts.lowStock.length}
+                {stats.alerts?.lowStock?.length || 0}
               </span>
             </div>
 
@@ -158,7 +159,7 @@ const AdminDashboard = () => {
                 <span className="text-sm font-medium text-gray-800">Today's Bookings</span>
               </div>
               <span className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs font-semibold">
-                {stats.bookings.today}
+                {stats.bookings?.today || 0}
               </span>
             </div>
             
@@ -168,7 +169,7 @@ const AdminDashboard = () => {
                 <span className="text-sm font-medium text-gray-800">Pending Requests</span>
               </div>
               <span className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs font-semibold">
-                {stats.alerts.pendingRequests}
+                {stats.alerts?.pendingRequests || 0}
               </span>
             </div>
           </div>
@@ -181,25 +182,30 @@ const AdminDashboard = () => {
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Bookings</h3>
           <div className="space-y-3">
-            {stats.recentActivity.recentBookings.map((booking) => (
-              <div key={booking._id} className="flex justify-between items-center p-3 border rounded-lg">
-                <div>
-                  <p className="font-medium text-gray-900">{booking.bookingId}</p>
-                  <p className="text-sm text-gray-600">{booking.customerId?.name}</p>
-                  <p className="text-xs text-gray-500">{booking.eventType}</p>
+            {stats.recentActivity.recentBookings && stats.recentActivity.recentBookings.length > 0 ? (
+              stats.recentActivity.recentBookings.map((booking) => (
+                <div key={booking._id} className="flex justify-between items-center p-3 border rounded-lg">
+                  <div>
+                    <p className="font-medium text-gray-900">{booking.bookingId || 'N/A'}</p>
+                    <p className="text-sm text-gray-600">{booking.customerId?.name || 'Unknown'}</p>
+                    <p className="text-xs text-gray-500">{booking.eventType || 'N/A'}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-gray-900">₹{(booking.pricing?.totalAmount || booking.totalAmount || 0).toLocaleString()}</p>
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      booking.status === 'Confirmed' ? 'bg-green-100 text-green-800' :
+                      booking.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                      booking.status === 'Completed' ? 'bg-blue-100 text-blue-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {booking.status}
+                    </span>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold text-gray-900">₹{booking.totalAmount}</p>
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    booking.status === 'Confirmed' ? 'bg-gray-100 text-gray-800' :
-                    booking.status === 'Pending' ? 'bg-gray-200 text-gray-900' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {booking.status}
-                  </span>
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-gray-500 text-center py-4">No recent bookings</p>
+            )}
           </div>
         </div>
 
@@ -207,20 +213,21 @@ const AdminDashboard = () => {
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Low Stock Alerts</h3>
           <div className="space-y-3">
-            {stats.alerts.lowStock.slice(0, 5).map((item) => (
-              <div key={item._id} className="flex justify-between items-center p-3 border rounded-lg border-gray-200 bg-gray-50">
-                <div>
-                  <p className="font-medium text-gray-900">{item.name}</p>
-                  <p className="text-sm text-gray-600">{item.type}</p>
+            {stats.alerts && stats.alerts.lowStock && stats.alerts.lowStock.length > 0 ? (
+              stats.alerts.lowStock.slice(0, 5).map((item) => (
+                <div key={item._id} className="flex justify-between items-center p-3 border rounded-lg border-gray-200 bg-gray-50">
+                  <div>
+                    <p className="font-medium text-gray-900">{item.name}</p>
+                    <p className="text-sm text-gray-600">{item.type || item.rating || 'N/A'}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs font-semibold">
+                      {item.availableQuantity || 'N/A'}
+                    </span>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <span className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs font-semibold">
-                    {item.availableQuantity} left
-                  </span>
-                </div>
-              </div>
-            ))}
-            {stats.alerts.lowStock.length === 0 && (
+              ))
+            ) : (
               <p className="text-gray-500 text-center py-4">No low stock items</p>
             )}
           </div>

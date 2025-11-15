@@ -18,7 +18,7 @@ exports.getDashboardStats = async (req, res) => {
         const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
         
         // Get total counts
-        const totalBookings = 0; // You can implement booking count later
+        const totalBookings = await Booking.countDocuments();
         const totalCustomers = await User.countDocuments({ role: 'customer' });
         const totalEquipment = await Camera.countDocuments(); // Using your camera collection
         
@@ -70,7 +70,7 @@ exports.getDashboardStats = async (req, res) => {
             .populate('customerId', 'name email')
             .sort({ createdAt: -1 })
             .limit(5)
-            .select('bookingId customerId totalAmount status createdAt eventType');
+            .lean();
         
         // Top subscription plans
         const topPlans = await CustomerSubscription.aggregate([
