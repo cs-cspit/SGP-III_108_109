@@ -68,13 +68,8 @@ function ShoppingCart() {
       return;
     }
     
-    // Navigate to checkout or payment page
-    toast.info('Redirecting to checkout...', {
-      position: 'top-right',
-      autoClose: 2000
-    });
-    // You can add navigation to checkout page here
-    // navigate('/checkout');
+    // Navigate to checkout page
+    navigate('/Checkout');
   };
 
   // Format currency

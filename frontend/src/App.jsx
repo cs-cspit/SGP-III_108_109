@@ -9,6 +9,7 @@ import AdminProtected from './components/AdminProtected'
 import Home from './components/Home'
 import Rent from './components/Rent'
 import ShoppingCart from './components/ShoppingCart'
+import Checkout from './components/Checkout'
 import Favorite from './components/Favorite'
 import AdminLayout from './components/admin/AdminLayout'
 import AdminDashboard from './components/admin/AdminDashboard'
@@ -41,6 +42,7 @@ function App() {
           <Route path='/Home' element={<Protected Pro={Home}/>} />
           <Route path='/Rent' element={<Protected Pro={Rent}/>} />
           <Route path='/Cart' element={<Protected Pro={ShoppingCart}/>} />
+          <Route path='/Checkout' element={<Protected Pro={Checkout}/>} />
           <Route path='/Favorite' element={<Protected Pro={Favorite}/>} />
           <Route path='/EquipmentBooking' element={<Protected Pro={EquipmentBooking}/>} />
           <Route path='/EventBooking' element={<Protected Pro={EventBooking}/>} />
